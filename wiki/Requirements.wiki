@@ -40,6 +40,7 @@ _Основной язык программирования_ - язык прог
   * [http://zeos.firmos.at/ ZeosDBO (ZeosLib)]
   * [http://tjabberclient.sourceforge.net/ TJabberClient]
   * [http://sourceforge.net/projects/glibwmi/ GLibWMI]
+  * [http://lockbox.seanbdurkin.id.au/ TurboPower LockBox]
 
 == Руководство по стилю написания кода ==
 
