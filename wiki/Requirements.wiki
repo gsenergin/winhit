@@ -33,6 +33,7 @@ _Основной язык программирования_ - язык прог
 
   * [http://www.alphaskins.com/ AlphaControls]
   * [http://code.google.com/p/delphi-spring-framework/ Delphi Spring Framework]
+  * [http://code.google.com/p/delphilhlplib/ DeHL (Delphi Help Lib)]
   * [http://wiki.delphi-jedi.org/index.php?title=JEDI_Code_Library JEDI Code Library]
   * [http://jvcl.delphi-jedi.org/ JEDI VCL]
   * [http://madshi.net/index.htm madExcept]
