@@ -8,7 +8,7 @@ Templates for StringReplace() function:
 */
 
 CREATE TABLE IF NOT EXISTS `software_config`.`installed_software` (
-  `ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `ID` INT UNSIGNED NOT NULL DEFAULT 0 AUTO_INCREMENT ,
   `RegistrationDateTime` DATETIME NOT NULL COMMENT 'Дата и время постановки на учёт.' ,
   `LicenseType` TINYTEXT NULL COMMENT 'Тип лицензии.' ,
   `LicenseExpires` DATETIME NULL COMMENT 'Дата и время истечения лицензии.' ,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `software_config`.`installed_software` (
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `software_config`.`%TABLE_NAME%` (
-  `ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `ID` INT UNSIGNED NOT NULL DEFAULT 0 AUTO_INCREMENT ,
   `RegistrationDateTime` DATETIME NOT NULL COMMENT 'Дата и время постановки на учёт.' ,
   %WMI_INFO% /* WMI Tech Info */
   PRIMARY KEY (`ID`) ,

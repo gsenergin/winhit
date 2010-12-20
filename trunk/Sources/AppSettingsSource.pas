@@ -157,7 +157,7 @@ function TDBSettings.SetUp(const Connection: TZConnection): Boolean;
     Ctx1, Ctx2 : TRTTIContext;
     Prop1, Prop2 : TRTTIProperty;
 begin
-  Result := False;
+  //Result := False;
   Assert(Assigned(Connection));
 
   For Prop1 in Ctx1.GetType(Connection.ClassType).GetProperties do
