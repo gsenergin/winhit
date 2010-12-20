@@ -6,9 +6,10 @@ unit DBInit;
 interface
 
 uses
-  SysUtils, Classes, RTTI, TypInfo, ZConnection, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZDataset, ZDbcIntfs, CWMIBase, StrUtils,
-  AppSettingsSource, WMIHardware, WMISoftware, MySQLHelpers;
+  Windows, SysUtils, Classes, RTTI, TypInfo, ZConnection, DB, ZAbstractRODataset,
+  ZAbstractDataset, ZDataset, ZDbcIntfs, CWMIBase, StrUtils, Dialogs,
+  AppSettingsSource, WMIHardware, WMISoftware, MySQLHelpers, SysUtilsEx,
+  ZSqlMonitor, Constants;
 
 type
   TdtmdlDBInit = class(TDataModule)
@@ -17,6 +18,7 @@ type
     zqCreateMainTables: TZQuery;
     zqCreateHardwareTables: TZQuery;
     zqCreateSoftwareTables: TZQuery;
+    zsqlmonDBInit: TZSQLMonitor;
   strict private
     FDBWasInitialized : Boolean;
   private
@@ -25,12 +27,12 @@ type
     procedure CreateHardwareTables;
     procedure CreateSoftwareTables;
 
+    procedure ExecuteSQL(const SQL: TStrings);
     procedure FillWMIProperties(const WMIComponent : TWMIBase;
                                 const WMIProperties : TStrings);
     procedure GenerateCreateTableScript(const WMIComponent : TWMIBase;
                                         const SQLTemplate : TStrings);
   public
-    procedure AfterConstruction; override;
     procedure InitDB;
   end;
 
@@ -44,30 +46,27 @@ implementation
 { TdtmdlDBInit }
 
 /// <summary>
-///  Устанавливаем параметры соединения и вызываем инициализацию БД.
-/// </summary>
-procedure TdtmdlDBInit.AfterConstruction;
-begin
-  inherited;
-  DBSettings.SetUp(ZConnection);
-end;
-
-/// <summary>
 ///  Создание таблиц категории Hardware.
 /// </summary>
 procedure TdtmdlDBInit.CreateHardwareTables;
   var
     Cmp : TComponent;
+    L : TStringList;
 begin
+  L := TStringList.Create;
+
   For Cmp in dtmdlWMIHardware do
   begin
     If Cmp is TWMIBase Then
     begin
+      L.Assign(zqCreateHardwareTables.SQL); // backup template for next iteration
       GenerateCreateTableScript(TWMIBase(Cmp), zqCreateHardwareTables.SQL);
-      zqCreateHardwareTables.Active := True;
-      { TODO : handle exceptions }
+      ExecuteSQL(zqCreateHardwareTables.SQL);
+      zqCreateHardwareTables.SQL.Assign(L);
     end;
   end;
+
+  FreeAndNil(L);
 end;
 
 /// <summary>
@@ -75,7 +74,7 @@ end;
 /// </summary>
 procedure TdtmdlDBInit.CreateMainTables;
 begin
-  zqCreateMainTables.Active := True;
+  ExecuteSQL(zqCreateMainTables.SQL);
 end;
 
 /// <summary>
@@ -83,7 +82,7 @@ end;
 /// </summary>
 procedure TdtmdlDBInit.CreateSchemas;
 begin
-  zqCreateSchemas.Active := True;
+  ExecuteSQL(zqCreateSchemas.SQL);
 end;
 
 /// <summary>
@@ -92,15 +91,53 @@ end;
 procedure TdtmdlDBInit.CreateSoftwareTables;
   var
     Cmp : TComponent;
+    L : TStringList;
 begin
+  L := TStringList.Create;
+
   For Cmp in dtmdlWMISoftware do
   begin
     If Cmp is TWMIBase Then
     begin
+      L.Assign(zqCreateSoftwareTables.SQL); // backup template for next iteration
       GenerateCreateTableScript(TWMIBase(Cmp), zqCreateSoftwareTables.SQL);
-      zqCreateSoftwareTables.Active := True;
-      { TODO : handle exceptions }
+      ExecuteSQL(zqCreateSoftwareTables.SQL);
+      zqCreateSoftwareTables.SQL.Assign(L);
     end;
+  end;
+
+  FreeAndNil(L);
+end;
+
+/// <summary>
+///  Выполнение SQL-скриптов по одной команде.
+/// </summary>
+procedure TdtmdlDBInit.ExecuteSQL(const SQL: TStrings);
+  var
+    i : Integer;
+    sCmd : String;
+begin
+  Assert(Assigned(SQL));
+
+  For i := 1 To TokensNum(SQL.Text, ';') do
+  begin
+    // getting next command:
+    sCmd := GetToken(SQL.Text, i, ';');
+
+    // remove comments:
+    While AnsiPosEx('/*', sCmd) <> 0 do
+      sCmd := DeleteEx(sCmd, AnsiPosEx('/*', sCmd), AnsiPosEx('*/', sCmd) + 1);
+
+    // remove linebreaks:
+    sCmd := StringReplace(sCmd, sLineBreak, ' ', [rfReplaceAll]);
+    // trimming:
+    sCmd := Trim(sCmd);
+
+    // если от команды что-нибудь осталось :D
+    If sCmd = '' Then Continue;
+    sCmd := sCmd + ';';
+
+    ZConnection.ExecuteDirect(sCmd);
   end;
 end;
 
@@ -119,6 +156,7 @@ procedure TdtmdlDBInit.FillWMIProperties(const WMIComponent: TWMIBase;
     Context, Context2 : TRTTIContext;
     Prop, Prop2 : TRTTIProperty;
     Val : TValue;
+    S : String;
 begin
   Assert(Assigned(WMIComponent));
   Assert(Assigned(WMIProperties));
@@ -133,12 +171,19 @@ begin
       If AnsiContainsText(Val.AsObject.ClassName, 'properties') Then
       begin
 
-        For Prop2 in Context2.GetType(Val.AsObject.ClassType).GetProperties do
+        For Prop2 in Context2.GetType(Val.AsObject.ClassType).GetDeclaredProperties do
         begin
-          If Prop2.Visibility = mvPublished Then
-            WMIProperties.Add('`' + Prop2.Name + '` ' +
-                  MySQLDataType(Prop2.GetValue(WMIComponent)) + ' NULL ,');
-
+          If Prop2.IsReadable And (Prop2.Visibility = mvPublished) Then
+          begin
+            { TODO : следующая строка - дикий костыль. }
+            If AnsiSameText(Prop2.Name, 'ID') Then
+              S := '  `Id_` ' +
+                    MySQLDataType(Prop2.PropertyType.TypeKind) + ' NULL ,'
+            Else
+              S := '  `' + Prop2.Name + '` ' +
+                    MySQLDataType(Prop2.PropertyType.TypeKind) + ' NULL ,';
+            WMIProperties.Add(S);
+          end;
         end;
 
       end;
@@ -161,17 +206,15 @@ procedure TdtmdlDBInit.GenerateCreateTableScript(const WMIComponent: TWMIBase;
                                                  const SQLTemplate: TStrings);
   var
     L : TStringList;
+    S : String;
 begin
   L := TStringList.Create;
+  S := SQLTemplate.Text;
 
   FillWMIProperties(WMIComponent, L);
-  Format(SQLTemplate.Text,
-        [WMIComponent.Name,  // table name
-         L.Text,             // wmi tech info
-         // indexes:
-         WMIComponent.Name, WMIComponent.Name, WMIComponent.Name,
-         // constraints:
-         WMIComponent.Name, WMIComponent.Name, WMIComponent.Name]);
+  S := StringReplace(S, STR_REPLACE_TABLENAME, WMIComponent.Name, [rfReplaceAll]);
+  S := StringReplace(S, STR_REPLACE_WMIINFO, L.Text, [rfReplaceAll]);
+  SQLTemplate.Text := S;
 
   FreeAndNil(L);
 end;
@@ -182,6 +225,12 @@ end;
 procedure TdtmdlDBInit.InitDB;
 begin
   If FDBWasInitialized Then Exit;
+
+  DeleteFile(ExpandFileName(zsqlmonDBInit.FileName));
+
+  DBSettings.LoadFromFile;
+  ZConnection.Connected := DBSettings.SetUp(ZConnection);
+
   Try
     CreateSchemas;
     CreateMainTables;
@@ -189,7 +238,11 @@ begin
     CreateSoftwareTables;
     FDBWasInitialized := True;
   Except
-    on E:EZSQLException do ;  // supressing SQL exceptions, they are useless
+    // Supressing some useless SQL exceptions:
+    on E:EZSQLException do
+    begin
+      If Not AnsiContainsText(E.Message, 'resultset') Then raise;
+    end;
   End;
 end;
 

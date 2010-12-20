@@ -1,14 +1,13 @@
 object dtmdlDBInit: TdtmdlDBInit
   OldCreateOrder = False
-  Height = 247
-  Width = 574
+  Height = 80
+  Width = 658
   object ZConnection: TZConnection
     Protocol = 'mysql-5'
     Left = 40
     Top = 16
   end
   object zqCreateSchemas: TZQuery
-    Connection = ZConnection
     SQL.Strings = (
       
         'CREATE SCHEMA IF NOT EXISTS `main` DEFAULT CHARACTER SET utf8 CO' +
@@ -24,7 +23,6 @@ object dtmdlDBInit: TdtmdlDBInit
     Top = 16
   end
   object zqCreateMainTables: TZQuery
-    Connection = ZConnection
     SQL.Strings = (
       '/* -------------------------'
       '   '#1058#1072#1073#1083#1080#1094#1099' '#1074' '#1089#1093#1077#1084#1077' `main`'
@@ -189,21 +187,19 @@ object dtmdlDBInit: TdtmdlDBInit
     Top = 16
   end
   object zqCreateHardwareTables: TZQuery
-    Connection = ZConnection
     SQL.Strings = (
       '/*'
       ''
-      'Templates for Format() function:'
+      'Templates for StringReplace() function:'
       ''
-      '1: %s - table name'
-      '2: %s - wmi tech info columns'
+      '1) %TABLE_NAME% - '#1080#1084#1103' '#1090#1072#1073#1083#1080#1094#1099'.'
       
-        '3, 4, 5: %s - unique indexes names (%s part - from table name) w' +
-        'hich are also used in 6, 7, 8.'
+        '2) %WMI_INFO% - '#1082#1086#1083#1086#1085#1082#1080', '#1074' '#1082#1086#1090#1086#1088#1099#1093' '#1073#1091#1076#1077#1090' '#1093#1088#1072#1085#1080#1090#1100#1089#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103', '#1089 +
+        #1086#1073#1088#1072#1085#1085#1072#1103' WMI.'
       ''
       '*/'
       ''
-      'CREATE TABLE IF NOT EXISTS `hardware_config`.`%s` ('
+      'CREATE TABLE IF NOT EXISTS `hardware_config`.`%TABLE_NAME%` ('
       '  `ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,'
       
         '  `RegistrationDateTime` DATETIME NOT NULL COMMENT '#39#1044#1072#1090#1072' '#1080' '#1074#1088#1077#1084#1103 +
@@ -214,22 +210,22 @@ object dtmdlDBInit: TdtmdlDBInit
       
         '  `EstimatedLifetime` DOUBLE NULL COMMENT '#39#1056#1072#1089#1095#1105#1090#1085#1099#1081' ('#1086#1078#1080#1076#1072#1077#1084#1099#1081')' +
         ' '#1089#1088#1086#1082' '#1089#1083#1091#1078#1073#1099'.'#39' ,'
-      '  %s /* WMI Tech Info */'
+      '  %WMI_INFO% /* WMI Tech Info */'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `%s_WorkstationID` (`ID` ASC) ,'
-      '  INDEX `%s_InventoryNumberID` (`ID` ASC) ,'
-      '  INDEX `%s_MateriallyAccountableID` (`ID` ASC) ,'
-      '  CONSTRAINT `%s_WorkstationID`'
+      '  INDEX `%TABLE_NAME%_WorkstationID` (`ID` ASC) ,'
+      '  INDEX `%TABLE_NAME%_InventoryNumberID` (`ID` ASC) ,'
+      '  INDEX `%TABLE_NAME%_MateriallyAccountableID` (`ID` ASC) ,'
+      '  CONSTRAINT `%TABLE_NAME%_WorkstationID`'
       '    FOREIGN KEY (`ID` )'
       '    REFERENCES `main`.`workstations` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE,'
-      '  CONSTRAINT `%s_InventoryNumberID`'
+      '  CONSTRAINT `%TABLE_NAME%_InventoryNumberID`'
       '    FOREIGN KEY (`ID` )'
       '    REFERENCES `main`.`inventory_numbers` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE RESTRICT,'
-      '  CONSTRAINT `%s_MateriallyAccountableID`'
+      '  CONSTRAINT `%TABLE_NAME%_MateriallyAccountableID`'
       '    FOREIGN KEY (`ID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
@@ -240,17 +236,15 @@ object dtmdlDBInit: TdtmdlDBInit
     Top = 16
   end
   object zqCreateSoftwareTables: TZQuery
-    Connection = ZConnection
     SQL.Strings = (
       '/*'
       ''
-      'Templates for Format() function:'
+      'Templates for StringReplace() function:'
       ''
-      '1: %s - table name'
-      '2: %s - wmi tech info columns'
+      '1) %TABLE_NAME% - '#1080#1084#1103' '#1090#1072#1073#1083#1080#1094#1099'.'
       
-        '3, 4, 5: %s - unique indexes names (%s part - from table name) w' +
-        'hich are also used in 6, 7, 8.'
+        '2) %WMI_INFO% - '#1082#1086#1083#1086#1085#1082#1080', '#1074' '#1082#1086#1090#1086#1088#1099#1093' '#1073#1091#1076#1077#1090' '#1093#1088#1072#1085#1080#1090#1100#1089#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103', '#1089 +
+        #1086#1073#1088#1072#1085#1085#1072#1103' WMI.'
       ''
       '*/'
       ''
@@ -286,27 +280,27 @@ object dtmdlDBInit: TdtmdlDBInit
       '    ON UPDATE CASCADE)'
       'ENGINE = InnoDB;'
       ''
-      'CREATE TABLE IF NOT EXISTS `software_config`.`%s` ('
+      'CREATE TABLE IF NOT EXISTS `software_config`.`%TABLE_NAME%` ('
       '  `ID` INT UNSIGNED NOT NULL AUTO_INCREMENT ,'
       
         '  `RegistrationDateTime` DATETIME NOT NULL COMMENT '#39#1044#1072#1090#1072' '#1080' '#1074#1088#1077#1084#1103 +
         ' '#1087#1086#1089#1090#1072#1085#1086#1074#1082#1080' '#1085#1072' '#1091#1095#1105#1090'.'#39' ,'
-      '  %s /* WMI Tech Info */'
+      '  %WMI_INFO% /* WMI Tech Info */'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `%s_WorkstationID` (`ID` ASC) ,'
-      '  INDEX `%s_InventoryNumberID` (`ID` ASC) ,'
-      '  INDEX `%s_MateriallyAccountableID` (`ID` ASC) ,'
-      '  CONSTRAINT `%s_WorkstationID`'
+      '  INDEX `%TABLE_NAME%_WorkstationID` (`ID` ASC) ,'
+      '  INDEX `%TABLE_NAME%_InventoryNumberID` (`ID` ASC) ,'
+      '  INDEX `%TABLE_NAME%_MateriallyAccountableID` (`ID` ASC) ,'
+      '  CONSTRAINT `%TABLE_NAME%_WorkstationID`'
       '    FOREIGN KEY (`ID` )'
       '    REFERENCES `main`.`workstations` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE,'
-      '  CONSTRAINT `%s_InventoryNumberID`'
+      '  CONSTRAINT `%TABLE_NAME%_InventoryNumberID`'
       '    FOREIGN KEY (`ID` )'
       '    REFERENCES `main`.`inventory_numbers` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE RESTRICT,'
-      '  CONSTRAINT `%s_MateriallyAccountableID`'
+      '  CONSTRAINT `%TABLE_NAME%_MateriallyAccountableID`'
       '    FOREIGN KEY (`ID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
@@ -314,6 +308,14 @@ object dtmdlDBInit: TdtmdlDBInit
       'ENGINE = InnoDB;')
     Params = <>
     Left = 488
+    Top = 16
+  end
+  object zsqlmonDBInit: TZSQLMonitor
+    Active = True
+    AutoSave = True
+    FileName = 'DBInit.log'
+    MaxTraceCount = 100
+    Left = 592
     Top = 16
   end
 end

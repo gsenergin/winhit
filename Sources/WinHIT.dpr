@@ -15,7 +15,7 @@ uses
   AppSettingsSource in 'AppSettingsSource.pas',
   SysUtilsEx in '..\ThirdParty\SysUtilsEx.pas',
   MySQLHelpers in 'DBAdapters\MySQL\MySQLHelpers.pas',
-  Test in 'Test.pas' {frmTest};
+  Test in 'GUI\Test.pas' {frmTest};
 
 {$R *.res}
 {$I 'PEFlags.inc'}
