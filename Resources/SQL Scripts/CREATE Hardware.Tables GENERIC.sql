@@ -8,7 +8,7 @@ Templates for StringReplace() function:
 */
 
 CREATE TABLE IF NOT EXISTS `hardware_config`.`%TABLE_NAME%` (
-  `ID` INT UNSIGNED NOT NULL DEFAULT 0 AUTO_INCREMENT ,
+  `ID` INT UNSIGNED NULL AUTO_INCREMENT ,
   `RegistrationDateTime` DATETIME NOT NULL COMMENT 'Дата и время постановки на учёт.' ,
   `WarrantiedLifetime` DOUBLE NULL COMMENT 'Гарантийный срок службы.' ,
   `EstimatedLifetime` DOUBLE NULL COMMENT 'Расчётный (ожидаемый) срок службы.' ,
