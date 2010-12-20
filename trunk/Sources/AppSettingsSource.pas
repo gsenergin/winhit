@@ -21,6 +21,7 @@ type
       FHostName : String;
       FPort : Integer;
     public
+      procedure Assign(Source: TPersistent); override;
       function  SetUp(const Connection : TZConnection) : Boolean;
       procedure LoadFromFile(const FileName : String); virtual;
       procedure SaveToFile(const FileName : String); virtual;
@@ -60,6 +61,42 @@ end;
 { TDBSettings }
 
 /// <summary>
+///  Присвоение настроек соединения из одного источника в другой.
+///  Используется как обходной манёвр для DeHL.Serialization.Ini, который
+///  после Deserialize и своего уничтожения прихватывает за собой и
+///  десериализованный объект.
+/// </summary>
+procedure TDBSettings.Assign(Source: TPersistent);
+  var
+    Ctx1, Ctx2 : TRTTIContext;
+    Prop1, Prop2 : TRTTIProperty;
+begin
+  If Source is Self.ClassType Then
+  begin
+
+    For Prop1 in Ctx1.GetType(Self.ClassType).GetProperties do
+    begin
+      If Prop1.IsWritable Then
+      begin
+
+        For Prop2 in Ctx2.GetType(Source.ClassType).GetProperties do
+        begin
+          If AnsiSameText(Prop1.Name, Prop2.Name) And Prop2.IsReadable Then
+          begin
+            Prop1.SetValue(Self, Prop2.GetValue(Source));
+            Break;
+          end;
+        end;
+
+      end;
+    end;
+
+    Exit;
+  end;
+  Inherited Assign(Source);
+end;
+
+/// <summary>
 ///  Загрузка настроек из файла.
 /// </summary>
 /// <param name="FileName">
@@ -69,6 +106,7 @@ procedure TDBSettings.LoadFromFile(const FileName: String);
   var
     INIFile : TINIFile;
     INIConfig : TINISerializer<TDBSettings>;
+    TmpObj : TDBSettings;
 begin
   Assert(FileExists(ExpandFileName(FileName)));
 
@@ -76,10 +114,12 @@ begin
   INIConfig := TINISerializer<TDBSettings>.Create;
 
   Try
-    INIConfig.Deserialize(Self, INIFile);
+    INIConfig.Deserialize(TmpObj, INIFile);
+    Self.Assign(TmpObj);
   Finally
     FreeAndNil(INIConfig);
     FreeAndNil(INIFile);
+    FreeAndNil(TmpObj);
   End;
 end;
 
@@ -114,21 +154,24 @@ end;
 /// </param>
 function TDBSettings.SetUp(const Connection: TZConnection): Boolean;
   var
-    Ctx : TRTTIContext;
+    Ctx1, Ctx2 : TRTTIContext;
     Prop1, Prop2 : TRTTIProperty;
 begin
   Result := False;
   Assert(Assigned(Connection));
 
-  For Prop1 in Ctx.GetType(Connection.ClassType).GetProperties do
+  For Prop1 in Ctx1.GetType(Connection.ClassType).GetProperties do
   begin
-    If Prop1.Visibility = mvPublished Then
+    If (Prop1.Visibility = mvPublished) And Prop1.IsWritable Then
     begin
 
-      For Prop2 in Ctx.GetType(Self.ClassType).GetProperties do
+      For Prop2 in Ctx2.GetType(Self.ClassType).GetProperties do
       begin
         If AnsiSameText(Prop1.Name, Prop2.Name) Then
+        begin
           Prop1.SetValue(Connection, Prop2.GetValue(Self));
+          Break;
+        end;
       end;
 
     end;
@@ -154,11 +197,5 @@ procedure TMySQLDBSettings.SaveToFile;
 begin
   Inherited SaveToFile(FFileName);
 end;
-
-initialization
-  {...}
-
-finalization
-  DBSettings.Free;
 
 end.

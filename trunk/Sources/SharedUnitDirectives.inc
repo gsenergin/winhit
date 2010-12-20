@@ -26,7 +26,7 @@
 {$RANGECHECKS OFF}  // Default {$RANGECHECKS OFF}
 {$REALCOMPATIBILITY OFF}  // Default {$REALCOMPATIBILITY OFF}
 
-{.$RTTI EXPLICIT METHODS([vcPrivate, vcProtected, vcPublic, vcPublished])
+{$RTTI EXPLICIT METHODS([vcPrivate, vcProtected, vcPublic, vcPublished])
                 PROPERTIES([vcPrivate, vcProtected, vcPublic, vcPublished])
 				FIELDS([vcPrivate, vcProtected, vcPublic, vcPublished])}
 // Default:
@@ -39,7 +39,7 @@
 {$STACKFRAMES OFF}  // Default {$STACKFRAMES OFF}
 {$VARSTRINGCHECKS ON}  // Default {$VARSTRINGCHECKS ON}
 
-{.$WARN SYMBOL_PLATFORM OFF}  // Default {$WARN SYMBOL_PLATFORM ON}
+{$WARN SYMBOL_PLATFORM OFF}  // Default {$WARN SYMBOL_PLATFORM ON}
 {$WARN SYMBOL_LIBRARY ON}  // Default {$WARN SYMBOL_LIBRARY ON}
 {$WARN SYMBOL_DEPRECATED ON}  // Default {$WARN SYMBOL_DEPRECATED ON}
 {$WARN UNIT_DEPRECATED ON}  // Default {$WARN UNIT_DEPRECATED ON}
