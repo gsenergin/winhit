@@ -175,13 +175,13 @@ begin
         begin
           If Prop2.IsReadable And (Prop2.Visibility = mvPublished) Then
           begin
-            { TODO : следующая строка - дикий костыль. }
+            { TODO : следующая конструкция - дикий костыль. }
             If AnsiSameText(Prop2.Name, 'ID') Then
               S := '  `Id_` ' +
-                    MySQLDataType(Prop2.PropertyType.TypeKind) + ' NULL ,'
+                    MySQLDataType(Prop2, WMIComponent) + ' NULL ,'
             Else
               S := '  `' + Prop2.Name + '` ' +
-                    MySQLDataType(Prop2.PropertyType.TypeKind) + ' NULL ,';
+                    MySQLDataType(Prop2, WMIComponent) + ' NULL ,';
             WMIProperties.Add(S);
           end;
         end;

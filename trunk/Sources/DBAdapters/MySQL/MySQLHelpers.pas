@@ -3,9 +3,10 @@ unit MySQLHelpers;
 interface
 
 uses
-  SysUtils, TypInfo;
+  SysUtils, RTTI, TypInfo;
 
-  function MySQLDataType(const TypeKind : TTypeKind) : String;
+  function MySQLDataType(const Source : TRTTIMember;
+                         const Instance : Pointer) : String;
 
 implementation
 
@@ -15,26 +16,87 @@ implementation
 /// <param name="TypeKind">
 ///  Тип данных для конвертирования.
 /// </param>
-function MySQLDataType(const TypeKind : TTypeKind) : String;
-begin
-  // Not included: tkClass, tkMethod, tkInterface, tkClassRef, tkProcedure
-  // tkEnumeration & tkSet - couldn't convert to ENUM() & SET()
-  Case TypeKind of
-    tkInteger: Result := 'INT';
-    tkInt64, tkPointer: Result := 'BIGINT';
+function MySQLDataType(const Source : TRTTIMember;
+                       const Instance : Pointer) : String;
+  var
+    Fld  : TRTTIField;
+    Prop : TRTTIProperty;
+    DataType : TRTTIType;
+    Value : TValue;
+    vTmp : Variant;
 
-    tkChar, tkWChar: Result := 'CHAR';
-    tkString: Result := 'VARCHAR(255)';
+  function UniversalType(const DataType : TRTTIType;
+                         const DataSize : Integer = 0) : String;
+  begin
+    Assert(Assigned(DataType));
+    If DataSize = 0 Then
+      Result := 'VARBINARY(' + IntToStr(DataType.TypeSize) + ')'
+    Else
+      Result := Format('VARBINARY(%d)', [DataSize]);
+  end;
+
+begin
+  Result := '';
+  Fld  := nil;
+  Prop := nil;
+  Assert((Source is TRTTIField) Or (Source is TRTTIProperty));
+
+  If Source is TRTTIField    Then Fld  := (Source as TRTTIField);
+  If Source is TRTTIProperty Then Prop := (Source as TRTTIProperty);
+
+  If Assigned(Fld)  Then DataType := Fld.FieldType;
+  If Assigned(Prop) Then DataType := Prop.PropertyType;
+
+  // Unused: tkClass, tkMethod, tkInterface, tkClassRef, tkProcedure
+  Case DataType.TypeKind of
+    tkFloat:                         Result := 'DOUBLE';
+
+    tkInteger:                       Result := 'INT';
+    tkPointer:                       Result := 'UNSIGNED INT';
+    tkInt64:                         Result := 'BIGINT';
+
+    tkChar, tkWChar:                 Result := 'CHAR(1)';
+    tkString:                        Result := 'VARCHAR(255)';
     tkLString, tkWString, tkUString: Result := 'LONGTEXT';
 
-    tkFloat: Result := 'FLOAT';
+    tkEnumeration, tkSet:            Result := 'VARBINARY(255)';
+    tkArray, tkDynArray:             Result := 'LONGBLOB';
 
-    tkDynArray: Result := 'LONGBINARY';
+    tkRecord:
+      begin
+        If DataType.IsManaged Then   Result := 'LONGBLOB'
+                              Else   Result := UniversalType(DataType);
+      end;
 
-    tkEnumeration, tkSet, tkArray, tkRecord, tkVariant, tkUnknown:
-      Result := 'BINARY';
+    tkVariant, tkUnknown:
+      begin
+        If Assigned(Fld)  Then Value := Fld.GetValue(Instance);
+        If Assigned(Prop) Then Value := Prop.GetValue(Instance);
+        vTmp := Value.AsVariant;
 
-{ TODO : tkVariant расширить в отдельный кейс с использованием varSingle и т.д. }
+        Case TVarData(vTmp).VType of
+          varEmpty, varNull: Result := UniversalType(DataType, Value.DataSize);
+          varBoolean:        Result := 'BOOLEAN';
+          varShortInt:       Result := 'TINYINT';
+          varSmallint:       Result := 'SMALLINT';
+          varInteger:        Result := 'INT';
+          varSingle:         Result := 'FLOAT';
+          varDouble:         Result := 'DOUBLE';
+          varCurrency:       Result := 'DOUBLE';
+          varDate:           Result := 'DOUBLE';
+          varOleStr:         Result := 'LONGTEXT';
+          varDispatch:       Result := UniversalType(DataType, Value.DataSize);
+          varError:          Result := 'INT';
+          varUnknown:        Result := UniversalType(DataType, Value.DataSize);
+          varByte:           Result := 'UNSIGNED TINYINT';
+          varWord:           Result := 'UNSIGNED SMALLINT';
+          varLongWord:       Result := 'UNSIGNED INT';
+          varInt64:          Result := 'BIGINT';
+          varUInt64:         Result := 'UNSIGNED BIGINT';
+          varString:         Result := 'LONGTEXT';
+          varUString:        Result := 'LONGTEXT';
+        End;
+      end;
   End;
 end;
 

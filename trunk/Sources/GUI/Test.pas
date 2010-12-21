@@ -13,9 +13,11 @@ type
     btnSaveDBSettings: TButton;
     btnLoadDBSettings: TButton;
     btnDBInit: TButton;
+    btnFillDBWithDIVISIONS: TButton;
     procedure btnSaveDBSettingsClick(Sender: TObject);
     procedure btnLoadDBSettingsClick(Sender: TObject);
     procedure btnDBInitClick(Sender: TObject);
+    procedure btnFillDBWithDIVISIONSClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -34,6 +36,11 @@ uses AppSettingsSource, DBInit;
 procedure TfrmTest.btnDBInitClick(Sender: TObject);
 begin
   dtmdlDBInit.InitDB;
+end;
+
+procedure TfrmTest.btnFillDBWithDIVISIONSClick(Sender: TObject);
+begin
+  //
 end;
 
 procedure TfrmTest.btnLoadDBSettingsClick(Sender: TObject);
