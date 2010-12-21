@@ -53,4 +53,13 @@ object frmTest: TfrmTest
       end
     end
   end
+  object btnFillDBWithDIVISIONS: TButton
+    Left = 12
+    Top = 125
+    Width = 133
+    Height = 25
+    Caption = 'btnFillDBWithDIVISIONS'
+    TabOrder = 1
+    OnClick = btnFillDBWithDIVISIONSClick
+  end
 end

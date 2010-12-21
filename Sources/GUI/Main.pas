@@ -11,8 +11,6 @@ uses
 
 type
   TfrmMain = class(TForm)
-    btnTest: TButton;
-    procedure btnTestClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -27,12 +25,5 @@ implementation
 uses Test;
 
 {$R *.dfm}
-
-procedure TfrmMain.btnTestClick(Sender: TObject);
-begin
-  WindowState := wsMinimized;
-  frmTest.ShowModal;
-  WindowState := wsNormal;
-end;
 
 end.
