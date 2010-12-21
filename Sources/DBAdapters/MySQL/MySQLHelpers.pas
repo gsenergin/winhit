@@ -39,6 +39,7 @@ begin
   Result := '';
   Fld  := nil;
   Prop := nil;
+  DataType := nil;
   Assert((Source is TRTTIField) Or (Source is TRTTIProperty));
 
   If Source is TRTTIField    Then Fld  := (Source as TRTTIField);

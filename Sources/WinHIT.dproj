@@ -69,6 +69,7 @@
 			<DCCReference Include="GUI\Test.pas">
 				<Form>frmTest</Form>
 			</DCCReference>
+			<DCCReference Include="SettingsBase.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
