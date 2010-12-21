@@ -50,7 +50,14 @@ end;
 
 procedure TfrmTest.btnSaveDBSettingsClick(Sender: TObject);
 begin
-  DBSettings.SaveToFile;
+  With DBSettings do
+  begin
+    HostName := '127.0.0.1';
+    Port := 3306;
+    User := 'root';
+    Password := 'qwertybash';
+    SaveToFile;
+  end;
 end;
 
 end.
