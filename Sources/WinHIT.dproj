@@ -70,6 +70,10 @@
 				<Form>frmTest</Form>
 			</DCCReference>
 			<DCCReference Include="SettingsBase.pas"/>
+			<DCCReference Include="DBAdapters\MySQL\DBConnector.pas">
+				<Form>dtmdlDBConnector</Form>
+				<DesignClass>TDataModule</DesignClass>
+			</DCCReference>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
