@@ -16,7 +16,8 @@ uses
   SysUtilsEx in '..\ThirdParty\SysUtilsEx.pas',
   MySQLHelpers in 'DBAdapters\MySQL\MySQLHelpers.pas',
   Test in 'GUI\Test.pas' {frmTest},
-  SettingsBase in 'SettingsBase.pas';
+  SettingsBase in 'SettingsBase.pas',
+  DBConnector in 'DBAdapters\MySQL\DBConnector.pas' {dtmdlDBConnector: TDataModule};
 
 {$R *.res}
 {$I 'PEFlags.inc'}
@@ -30,5 +31,6 @@ begin
   Application.CreateForm(TdtmdlWMISoftware, dtmdlWMISoftware);
   Application.CreateForm(TdtmdlDBInit, dtmdlDBInit);
   Application.CreateForm(TfrmTest, frmTest);
+  Application.CreateForm(TdtmdlDBConnector, dtmdlDBConnector);
   Application.Run;
 end.
