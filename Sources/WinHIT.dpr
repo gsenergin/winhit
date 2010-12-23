@@ -17,7 +17,8 @@ uses
   MySQLHelpers in 'DBAdapters\MySQL\MySQLHelpers.pas',
   Test in 'GUI\Test.pas' {frmTest},
   SettingsBase in 'SettingsBase.pas',
-  DBConnector in 'DBAdapters\MySQL\DBConnector.pas' {dtmdlDBConnector: TDataModule};
+  DBConnector in 'DBAdapters\MySQL\DBConnector.pas' {dtmdlDBConnector: TDataModule},
+  PassWord in 'GUI\PassWord.pas' {PasswordDlg};
 
 {$R *.res}
 {$I 'PEFlags.inc'}
@@ -32,5 +33,6 @@ begin
   Application.CreateForm(TdtmdlDBInit, dtmdlDBInit);
   Application.CreateForm(TfrmTest, frmTest);
   Application.CreateForm(TdtmdlDBConnector, dtmdlDBConnector);
+  Application.CreateForm(TPasswordDlg, PasswordDlg);
   Application.Run;
 end.

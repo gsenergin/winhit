@@ -9,12 +9,12 @@ uses
   Classes, ZConnection, AppSettingsSource;
 
 type
-  TdtmdlDBConnector = class abstract (TDataModule)
+  TdtmdlDBConnector = class(TDataModule)
     ZConnection: TZConnection;
   private
     { Private declarations }
   public
-    procedure AfterConstruction; override;
+    function ConnectToDB : Boolean; virtual;
   end;
 
 var
@@ -26,11 +26,11 @@ implementation
 
 { TdtmdlDBConnector }
 
-procedure TdtmdlDBConnector.AfterConstruction;
+function TdtmdlDBConnector.ConnectToDB : Boolean;
 begin
-  Inherited;
   DBSettings.LoadFromFile;
   ZConnection.Connected := DBSettings.SetUp(ZConnection);
+  Result := ZConnection.Connected;
 end;
 
 end.

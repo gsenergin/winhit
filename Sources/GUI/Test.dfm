@@ -19,7 +19,7 @@ object frmTest: TfrmTest
     Top = 0
     Width = 778
     Height = 534
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -51,15 +51,37 @@ object frmTest: TfrmTest
         TabOrder = 2
         OnClick = btnDBInitClick
       end
+      object btnFillDBWithDIVISIONS: TButton
+        Left = 140
+        Top = 8
+        Width = 133
+        Height = 25
+        Caption = 'btnFillDBWithDIVISIONS'
+        TabOrder = 3
+        OnClick = btnFillDBWithDIVISIONSClick
+      end
     end
-  end
-  object btnFillDBWithDIVISIONS: TButton
-    Left = 12
-    Top = 125
-    Width = 133
-    Height = 25
-    Caption = 'btnFillDBWithDIVISIONS'
-    TabOrder = 1
-    OnClick = btnFillDBWithDIVISIONSClick
+    object TabSheet2: TTabSheet
+      Caption = 'TabSheet2'
+      ImageIndex = 1
+      object btnSavePassword: TButton
+        Left = 16
+        Top = 16
+        Width = 129
+        Height = 25
+        Caption = 'btnSavePassword'
+        TabOrder = 0
+        OnClick = btnSavePasswordClick
+      end
+      object btnLoadPasswordHash: TButton
+        Left = 16
+        Top = 47
+        Width = 129
+        Height = 25
+        Caption = 'btnLoadPasswordHash'
+        TabOrder = 1
+        OnClick = btnLoadPasswordHashClick
+      end
+    end
   end
 end
