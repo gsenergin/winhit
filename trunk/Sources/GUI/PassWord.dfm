@@ -26,6 +26,7 @@ object PasswordDlg: TPasswordDlg
     Height = 21
     PasswordChar = '*'
     TabOrder = 0
+    Text = 'qwertybash'
   end
   object OKBtn: TButton
     Left = 70
@@ -48,5 +49,16 @@ object PasswordDlg: TPasswordDlg
     ModalResult = 2
     TabOrder = 2
     OnClick = CancelBtnClick
+  end
+  object SkinProvider: TsSkinProvider
+    AddedTitle.Font.Charset = DEFAULT_CHARSET
+    AddedTitle.Font.Color = clNone
+    AddedTitle.Font.Height = -11
+    AddedTitle.Font.Name = 'Tahoma'
+    AddedTitle.Font.Style = []
+    SkinData.SkinSection = 'FORM'
+    TitleButtons = <>
+    Left = 8
+    Top = 48
   end
 end

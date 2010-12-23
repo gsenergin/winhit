@@ -18,7 +18,8 @@ uses
   Test in 'GUI\Test.pas' {frmTest},
   SettingsBase in 'SettingsBase.pas',
   DBConnector in 'DBAdapters\MySQL\DBConnector.pas' {dtmdlDBConnector: TDataModule},
-  PassWord in 'GUI\PassWord.pas' {PasswordDlg};
+  PassWord in 'GUI\PassWord.pas' {PasswordDlg},
+  JvDBComponents in 'DBAdapters\MySQL\JvDBComponents.pas' {dtmdlJvDBComponents: TDataModule};
 
 {$R *.res}
 {$I 'PEFlags.inc'}
@@ -34,5 +35,6 @@ begin
   Application.CreateForm(TfrmTest, frmTest);
   Application.CreateForm(TdtmdlDBConnector, dtmdlDBConnector);
   Application.CreateForm(TPasswordDlg, PasswordDlg);
+  Application.CreateForm(TdtmdlJvDBComponents, dtmdlJvDBComponents);
   Application.Run;
 end.

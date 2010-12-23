@@ -77,6 +77,10 @@
 			<DCCReference Include="GUI\PassWord.pas">
 				<Form>PasswordDlg</Form>
 			</DCCReference>
+			<DCCReference Include="DBAdapters\MySQL\JvDBComponents.pas">
+				<Form>dtmdlJvDBComponents</Form>
+				<DesignClass>TDataModule</DesignClass>
+			</DCCReference>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
