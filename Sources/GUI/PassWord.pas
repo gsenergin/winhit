@@ -7,7 +7,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls, Buttons,
-  Spring.Cryptography, AppSettingsSource;
+  Spring.Cryptography, AppSettingsSource, sSkinProvider;
 
 type
   TPasswordDlg = class(TForm)
@@ -15,6 +15,7 @@ type
     Password: TEdit;
     OKBtn: TButton;
     CancelBtn: TButton;
+    SkinProvider: TsSkinProvider;
     procedure CancelBtnClick(Sender: TObject);
     procedure OKBtnClick(Sender: TObject);
   private
