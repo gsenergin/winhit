@@ -1,7 +1,7 @@
 object dtmdlDBConnector: TdtmdlDBConnector
   OldCreateOrder = False
-  Height = 74
-  Width = 79
+  Height = 76
+  Width = 91
   object ZConnection: TZConnection
     Protocol = 'mysql-5'
     SQLHourGlass = True

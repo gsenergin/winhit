@@ -6,8 +6,8 @@ unit AppSettingsSource;
 interface
 
 uses
-  Windows, Classes, SysUtils, RTTI, TypInfo, IniFiles, ZConnection,
-  DeHL.Serialization.INI, Spring.DesignPatterns, Constants, SettingsBase;
+  Windows, Classes, SysUtils, RTTI, TypInfo, ZConnection,
+  Spring.DesignPatterns, Constants, SettingsBase, Spring.Cryptography;
 
 type
 
@@ -34,14 +34,32 @@ type
   /// <summary>
   ///  Класс настроек соединения с СУБД, заточенный под синглтон.
   /// </summary>
-  TMySQLDBSettings = class (TDBSettings)
+  TMySQLDBSettings = class sealed (TDBSettings)
     public
       procedure AfterConstruction; override;
       procedure LoadFromFile; reintroduce;
       procedure SaveToFile; reintroduce;
   end;
 
+  /// <summary>
+  ///  Класс для хранения пароля входа в приложение.
+  /// </summary>
+  TPasswordStore = class sealed (TSettingsBase)
+    strict private
+      FPasswordHash : String;
+    public
+      procedure AfterConstruction; override;
+      procedure Hash(const Password : String);
+      procedure LoadFromFile;
+      procedure SaveToFile;
+
+      property PasswordHash : String read FPasswordHash write FPasswordHash;
+  end;
+
+//------------------------------------------------------------------------------
+
   function DBSettings : TMySQLDBSettings;
+  function PasswordStore : TPasswordStore;
 
 implementation
 
@@ -51,6 +69,14 @@ implementation
 function DBSettings : TMySQLDBSettings;
 begin
   Result := TSingleton.GetInstance<TMySQLDBSettings>;
+end;
+
+/// <summary>
+///  Получение единственного в системе экземпляра с хэшем пароля доступа.
+/// </summary>
+function PasswordStore : TPasswordStore;
+begin
+  Result := TSingleton.GetInstance<TPasswordStore>;
 end;
 
 { TDBSettings }
@@ -104,6 +130,41 @@ end;
 procedure TMySQLDBSettings.SaveToFile;
 begin
   Inherited SaveToFile(SettingsFile);
+end;
+
+{ TPasswordStore }
+
+procedure TPasswordStore.AfterConstruction;
+begin
+  Inherited;
+  SettingsFile := STR_PASSWORD_FILE;
+end;
+
+procedure TPasswordStore.LoadFromFile;
+begin
+  Inherited LoadFromINI;
+end;
+
+procedure TPasswordStore.SaveToFile;
+begin
+  Inherited SaveToINI;
+end;
+
+/// <summary>
+///  Сохранение хэша пароля. В параметре передаётся сам пароль, а хэш
+///  высчитывает процедура, она же сохраняет его как HEX-строку.
+/// </summary>
+procedure TPasswordStore.Hash(const Password : String);
+  var
+    SHA : TSHA512;
+begin
+  SHA := TSHA512.Create;
+  Try
+    FPasswordHash := SHA.ComputeHash(Password).ToHexString;
+    SaveToFile;
+  Finally
+    FreeAndNil(SHA);
+  End;
 end;
 
 end.

@@ -14,10 +14,15 @@ type
     btnLoadDBSettings: TButton;
     btnDBInit: TButton;
     btnFillDBWithDIVISIONS: TButton;
+    TabSheet2: TTabSheet;
+    btnSavePassword: TButton;
+    btnLoadPasswordHash: TButton;
     procedure btnSaveDBSettingsClick(Sender: TObject);
     procedure btnLoadDBSettingsClick(Sender: TObject);
     procedure btnDBInitClick(Sender: TObject);
     procedure btnFillDBWithDIVISIONSClick(Sender: TObject);
+    procedure btnSavePasswordClick(Sender: TObject);
+    procedure btnLoadPasswordHashClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -48,6 +53,12 @@ begin
   DBSettings.LoadFromFile;
 end;
 
+procedure TfrmTest.btnLoadPasswordHashClick(Sender: TObject);
+begin
+  PasswordStore.LoadFromFile;
+  ShowMessage(PasswordStore.PasswordHash);
+end;
+
 procedure TfrmTest.btnSaveDBSettingsClick(Sender: TObject);
 begin
   With DBSettings do
@@ -58,6 +69,12 @@ begin
     Password := 'qwertybash';
     SaveToFile;
   end;
+end;
+
+procedure TfrmTest.btnSavePasswordClick(Sender: TObject);
+begin
+  PasswordStore.Hash('qwertybash');
+  PasswordStore.SaveToFile;
 end;
 
 end.
