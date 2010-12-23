@@ -13,6 +13,10 @@
 @pause > NUL
 @echo off
 
+REM Deleting binaries and working files:
+del ".\bin\debug\*.*" /F /Q
+del ".\bin\release\*.*" /F /Q
+
 REM Deleting unnecessary files:
 del /F /S /Q *.bak
 del /F /S /Q *.dcu

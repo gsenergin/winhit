@@ -24,10 +24,6 @@ object dtmdlDBInit: TdtmdlDBInit
   end
   object zqCreateMainTables: TZQuery
     SQL.Strings = (
-      '/* -------------------------'
-      '   '#1058#1072#1073#1083#1080#1094#1099' '#1074' '#1089#1093#1077#1084#1077' `main`'
-      '-------------------------- */'
-      ''
       'USE `main`;'
       ''
       'CREATE TABLE IF NOT EXISTS `main`.`notifications` ('
@@ -71,10 +67,14 @@ object dtmdlDBInit: TdtmdlDBInit
       
         '  `AdditionalName` TEXT NULL COMMENT '#39#1044#1086#1087#1086#1083#1085#1080#1090#1077#1083#1100#1085#1086#1077' '#1087#1086#1083#1077' '#1076#1083#1103' '#1089#1083 +
         #1086#1078#1085#1099#1093' '#1080' '#1076#1083#1080#1085#1085#1099#1093' '#1080#1084#1105#1085'.'#39' ,'
+      
+        '  `DivisionID` INT UNSIGNED NOT NULL COMMENT '#39#1055#1086#1076#1088#1072#1079#1076#1077#1083#1077#1085#1080#1077' '#1087#1086#1083#1100 +
+        #1079#1086#1074#1072#1090#1077#1083#1103'.'#39' ,'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `Users_DivisionID` (`ID` ASC) ,'
+      '  KEY `DivisionID` (`DivisionID`) ,'
+      '  INDEX `Users_DivisionID` (`DivisionID` ASC) ,'
       '  CONSTRAINT `Users_DivisionID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`DivisionID` )'
       '    REFERENCES `main`.`divisions` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE)'
@@ -87,16 +87,24 @@ object dtmdlDBInit: TdtmdlDBInit
         '  `RepairDateTime` DATETIME NOT NULL COMMENT '#39#1044#1072#1090#1072' '#1080' '#1074#1088#1077#1084#1103' '#1088#1077#1084#1086#1085 +
         #1090#1072'.'#39' ,'
       '  `Description` LONGTEXT NOT NULL COMMENT '#39#1054#1087#1080#1089#1072#1085#1080#1077' '#1088#1077#1084#1086#1085#1090#1072'.'#39' ,'
+      
+        '  `InventoryNumberID` INT UNSIGNED NOT NULL COMMENT '#39#1048#1085#1074#1077#1085#1090#1072#1088#1085#1099#1081 +
+        ' '#1085#1086#1084#1077#1088' '#1088#1077#1084#1086#1085#1090#1080#1088#1091#1077#1084#1086#1075#1086' '#1086#1073#1098#1077#1082#1090#1072'.'#39' ,'
+      
+        '  `SpecialistID` INT UNSIGNED NOT NULL COMMENT '#39#1057#1087#1077#1094#1080#1072#1083#1080#1089#1090', '#1087#1088#1086#1080 +
+        #1079#1074#1086#1076#1080#1074#1096#1080#1081' '#1088#1077#1084#1086#1085#1090'.'#39' ,'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `Repairs_InventoryNumberID` (`ID` ASC) ,'
-      '  INDEX `Repairs_SpecialistID` (`ID` ASC) ,'
+      '  KEY `InventoryNumberID` (`InventoryNumberID`) ,'
+      '  KEY `SpecialistID` (`SpecialistID`) ,'
+      '  INDEX `Repairs_InventoryNumberID` (`InventoryNumberID` ASC) ,'
+      '  INDEX `Repairs_SpecialistID` (`SpecialistID` ASC) ,'
       '  CONSTRAINT `Repairs_InventoryNumberID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`InventoryNumberID` )'
       '    REFERENCES `main`.`inventory_numbers` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE RESTRICT,'
       '  CONSTRAINT `Repairs_SpecialistID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`SpecialistID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE)'
@@ -117,23 +125,39 @@ object dtmdlDBInit: TdtmdlDBInit
         #1086#1095#1077#1081' '#1075#1088#1091#1087#1087#1099'.'#39' ,'
       
         '  `Comments` TINYTEXT NULL COMMENT '#39#1050#1086#1084#1084#1077#1085#1090#1072#1088#1080#1080' '#1082' '#1088#1072#1073#1086#1095#1077#1081' '#1089#1090#1072#1085#1094#1080 +
-        #1080#39' ,'
+        #1080'.'#39' ,'
+      
+        '  `InventoryNumberID` INT UNSIGNED NOT NULL COMMENT '#39#1048#1085#1074#1077#1085#1090#1072#1088#1085#1099#1081 +
+        ' '#1085#1086#1084#1077#1088' '#1088#1072#1073#1086#1095#1077#1081' '#1089#1090#1072#1085#1094#1080#1080'.'#39' ,'
+      
+        '  `DivisionID` INT UNSIGNED NOT NULL COMMENT '#39#1055#1086#1076#1088#1072#1079#1076#1077#1083#1077#1085#1080#1077' '#1088#1072#1073#1086 +
+        #1095#1077#1081' '#1089#1090#1072#1085#1094#1080#1080'.'#39' ,'
+      
+        '  `MateriallyAccountableID` INT UNSIGNED NOT NULL COMMENT '#39#1052#1072#1090#1077#1088 +
+        #1080#1072#1083#1100#1085#1086' '#1086#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081'.'#39' ,'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `Workstations_InventoryNumberID` (`ID` ASC) ,'
-      '  INDEX `Workstations_DivisionID` (`ID` ASC) ,'
-      '  INDEX `Workstations_MateriallyAccountableID` (`ID` ASC) ,'
+      '  KEY `InventoryNumberID` (`InventoryNumberID`) ,'
+      '  KEY `DivisionID` (`DivisionID`) ,'
+      '  KEY `MateriallyAccountableID` (`MateriallyAccountableID`) ,'
+      
+        '  INDEX `Workstations_InventoryNumberID` (`InventoryNumberID` AS' +
+        'C) ,'
+      '  INDEX `Workstations_DivisionID` (`DivisionID` ASC) ,'
+      
+        '  INDEX `Workstations_MateriallyAccountableID` (`MateriallyAccou' +
+        'ntableID` ASC) ,'
       '  CONSTRAINT `Workstations_InventoryNumberID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`InventoryNumberID` )'
       '    REFERENCES `main`.`inventory_numbers` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE RESTRICT,'
       '  CONSTRAINT `Workstations_DivisionID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`DivisionID` )'
       '    REFERENCES `main`.`divisions` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE,'
       '  CONSTRAINT `Workstations_MateriallyAccountableID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`MateriallyAccountableID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE)'
@@ -167,16 +191,22 @@ object dtmdlDBInit: TdtmdlDBInit
       
         '  `TableRecordID` INT UNSIGNED NULL COMMENT '#39'ID '#1079#1072#1087#1080#1089#1080' '#1074' '#1090#1072#1073#1083#1080#1094#1077 +
         ', '#1086#1087#1088#1077#1076#1077#1083#1103#1077#1084#1086#1081' '#1087#1086' FK TablesDictionaryID'#39' ,'
+      '  `SupervisorID` INT UNSIGNED NOT NULL COMMENT '#39#39' ,'
+      '  `TablesDictionaryID` INT UNSIGNED NOT NULL COMMENT '#39#39' ,'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `SupervisorID` (`ID` ASC) ,'
-      '  INDEX `TablesDictionaryID` (`ID` ASC) ,'
-      '  CONSTRAINT `SupervisorID`'
-      '    FOREIGN KEY (`ID` )'
+      '  KEY `SupervisorID` (`SupervisorID`) ,'
+      '  KEY `TablesDictionaryID` (`TablesDictionaryID`) ,'
+      '  INDEX `InventoryHistory_SupervisorID` (`SupervisorID` ASC) ,'
+      
+        '  INDEX `InventoryHistory_TablesDictionaryID` (`TablesDictionary' +
+        'ID` ASC) ,'
+      '  CONSTRAINT `InventoryHistory_SupervisorID`'
+      '    FOREIGN KEY (`SupervisorID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE,'
-      '  CONSTRAINT `TablesDictionaryID`'
-      '    FOREIGN KEY (`ID` )'
+      '  CONSTRAINT `InventoryHistory_TablesDictionaryID`'
+      '    FOREIGN KEY (`TablesDictionaryID` )'
       '    REFERENCES `main`.`tables_dictionary` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE)'
@@ -188,17 +218,6 @@ object dtmdlDBInit: TdtmdlDBInit
   end
   object zqCreateHardwareTables: TZQuery
     SQL.Strings = (
-      '/*'
-      ''
-      'Templates for StringReplace() function:'
-      ''
-      '1) %TABLE_NAME% - '#1080#1084#1103' '#1090#1072#1073#1083#1080#1094#1099'.'
-      
-        '2) %WMI_INFO% - '#1082#1086#1083#1086#1085#1082#1080', '#1074' '#1082#1086#1090#1086#1088#1099#1093' '#1073#1091#1076#1077#1090' '#1093#1088#1072#1085#1080#1090#1100#1089#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103', '#1089 +
-        #1086#1073#1088#1072#1085#1085#1072#1103' WMI.'
-      ''
-      '*/'
-      ''
       'CREATE TABLE IF NOT EXISTS `hardware_config`.`%TABLE_NAME%` ('
       '  `ID` INT UNSIGNED NULL AUTO_INCREMENT ,'
       
@@ -210,23 +229,39 @@ object dtmdlDBInit: TdtmdlDBInit
       
         '  `EstimatedLifetime` DOUBLE NULL COMMENT '#39#1056#1072#1089#1095#1105#1090#1085#1099#1081' ('#1086#1078#1080#1076#1072#1077#1084#1099#1081')' +
         ' '#1089#1088#1086#1082' '#1089#1083#1091#1078#1073#1099'.'#39' ,'
+      
+        '  `WorkstationID` INT UNSIGNED NOT NULL COMMENT '#39#1056#1072#1073#1086#1095#1072#1103' '#1089#1090#1072#1085#1094#1080#1103 +
+        ', '#1085#1072' '#1082#1086#1090#1086#1088#1086#1081' '#1086#1073#1085#1072#1088#1091#1078#1077#1085' '#1086#1073#1098#1077#1082#1090'.'#39' ,'
+      
+        '  `InventoryNumberID` INT UNSIGNED NOT NULL COMMENT '#39#1048#1085#1074#1077#1085#1090#1072#1088#1085#1099#1081 +
+        ' '#1085#1086#1084#1077#1088'.'#39' ,'
+      
+        '  `MateriallyAccountableID` INT UNSIGNED NOT NULL COMMENT '#39#1052#1072#1090#1077#1088 +
+        #1080#1072#1083#1100#1085#1086' '#1086#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081'.'#39' ,'
       '  %WMI_INFO% /* WMI Tech Info */'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `%TABLE_NAME%_WorkstationID` (`ID` ASC) ,'
-      '  INDEX `%TABLE_NAME%_InventoryNumberID` (`ID` ASC) ,'
-      '  INDEX `%TABLE_NAME%_MateriallyAccountableID` (`ID` ASC) ,'
+      '  KEY `WorkstationID` (`WorkstationID`) ,'
+      '  KEY `InventoryNumberID` (`InventoryNumberID`) ,'
+      '  KEY `MateriallyAccountableID` (`MateriallyAccountableID`) ,'
+      '  INDEX `%TABLE_NAME%_WorkstationID` (`WorkstationID` ASC) ,'
+      
+        '  INDEX `%TABLE_NAME%_InventoryNumberID` (`InventoryNumberID` AS' +
+        'C) ,'
+      
+        '  INDEX `%TABLE_NAME%_MateriallyAccountableID` (`MateriallyAccou' +
+        'ntableID` ASC) ,'
       '  CONSTRAINT `%TABLE_NAME%_WorkstationID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`WorkstationID` )'
       '    REFERENCES `main`.`workstations` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE,'
       '  CONSTRAINT `%TABLE_NAME%_InventoryNumberID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`InventoryNumberID` )'
       '    REFERENCES `main`.`inventory_numbers` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE RESTRICT,'
       '  CONSTRAINT `%TABLE_NAME%_MateriallyAccountableID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`MateriallyAccountableID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE)'
@@ -237,17 +272,6 @@ object dtmdlDBInit: TdtmdlDBInit
   end
   object zqCreateSoftwareTables: TZQuery
     SQL.Strings = (
-      '/*'
-      ''
-      'Templates for StringReplace() function:'
-      ''
-      '1) %TABLE_NAME% - '#1080#1084#1103' '#1090#1072#1073#1083#1080#1094#1099'.'
-      
-        '2) %WMI_INFO% - '#1082#1086#1083#1086#1085#1082#1080', '#1074' '#1082#1086#1090#1086#1088#1099#1093' '#1073#1091#1076#1077#1090' '#1093#1088#1072#1085#1080#1090#1100#1089#1103' '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1103', '#1089 +
-        #1086#1073#1088#1072#1085#1085#1072#1103' WMI.'
-      ''
-      '*/'
-      ''
       
         'CREATE TABLE IF NOT EXISTS `software_config`.`installed_software' +
         '` ('
@@ -259,22 +283,40 @@ object dtmdlDBInit: TdtmdlDBInit
       
         '  `LicenseExpires` DATETIME NULL COMMENT '#39#1044#1072#1090#1072' '#1080' '#1074#1088#1077#1084#1103' '#1080#1089#1090#1077#1095#1077#1085#1080#1103 +
         ' '#1083#1080#1094#1077#1085#1079#1080#1080'.'#39' ,'
+      
+        '  `WorkstationID` INT UNSIGNED NOT NULL COMMENT '#39#1056#1072#1073#1086#1095#1072#1103' '#1089#1090#1072#1085#1094#1080#1103 +
+        ', '#1085#1072' '#1082#1086#1090#1086#1088#1086#1081' '#1086#1073#1085#1072#1088#1091#1078#1077#1085' '#1086#1073#1098#1077#1082#1090'.'#39' ,'
+      
+        '  `InventoryNumberID` INT UNSIGNED NOT NULL COMMENT '#39#1048#1085#1074#1077#1085#1090#1072#1088#1085#1099#1081 +
+        ' '#1085#1086#1084#1077#1088'.'#39' ,'
+      
+        '  `MateriallyAccountableID` INT UNSIGNED NOT NULL COMMENT '#39#1052#1072#1090#1077#1088 +
+        #1080#1072#1083#1100#1085#1086' '#1086#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081'.'#39' ,'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `InstalledSoftware_WorkstationID` (`ID` ASC) ,'
-      '  INDEX `InstalledSoftware_InventoryNumberID` (`ID` ASC) ,'
-      '  INDEX `InstalledSoftware_MateriallyAccountableID` (`ID` ASC) ,'
+      '  KEY `WorkstationID` (`WorkstationID`) ,'
+      '  KEY `InventoryNumberID` (`InventoryNumberID`) ,'
+      '  KEY `MateriallyAccountableID` (`MateriallyAccountableID`) ,'
+      
+        '  INDEX `InstalledSoftware_WorkstationID` (`WorkstationID` ASC) ' +
+        ','
+      
+        '  INDEX `InstalledSoftware_InventoryNumberID` (`InventoryNumberI' +
+        'D` ASC) ,'
+      
+        '  INDEX `InstalledSoftware_MateriallyAccountableID` (`Materially' +
+        'AccountableID` ASC) ,'
       '  CONSTRAINT `InstalledSoftware_WorkstationID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`WorkstationID` )'
       '    REFERENCES `main`.`workstations` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE,'
       '  CONSTRAINT `InstalledSoftware_InventoryNumberID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`InventoryNumberID` )'
       '    REFERENCES `main`.`inventory_numbers` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE RESTRICT,'
       '  CONSTRAINT `InstalledSoftware_MateriallyAccountableID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`MateriallyAccountableID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE)'
@@ -285,23 +327,39 @@ object dtmdlDBInit: TdtmdlDBInit
       
         '  `RegistrationDateTime` DATETIME NOT NULL COMMENT '#39#1044#1072#1090#1072' '#1080' '#1074#1088#1077#1084#1103 +
         ' '#1087#1086#1089#1090#1072#1085#1086#1074#1082#1080' '#1085#1072' '#1091#1095#1105#1090'.'#39' ,'
+      
+        '  `WorkstationID` INT UNSIGNED NOT NULL COMMENT '#39#1056#1072#1073#1086#1095#1072#1103' '#1089#1090#1072#1085#1094#1080#1103 +
+        ', '#1085#1072' '#1082#1086#1090#1086#1088#1086#1081' '#1086#1073#1085#1072#1088#1091#1078#1077#1085' '#1086#1073#1098#1077#1082#1090'.'#39' ,'
+      
+        '  `InventoryNumberID` INT UNSIGNED NOT NULL COMMENT '#39#1048#1085#1074#1077#1085#1090#1072#1088#1085#1099#1081 +
+        ' '#1085#1086#1084#1077#1088'.'#39' ,'
+      
+        '  `MateriallyAccountableID` INT UNSIGNED NOT NULL COMMENT '#39#1052#1072#1090#1077#1088 +
+        #1080#1072#1083#1100#1085#1086' '#1086#1090#1074#1077#1090#1089#1090#1074#1077#1085#1085#1099#1081'.'#39' ,'
       '  %WMI_INFO% /* WMI Tech Info */'
       '  PRIMARY KEY (`ID`) ,'
-      '  INDEX `%TABLE_NAME%_WorkstationID` (`ID` ASC) ,'
-      '  INDEX `%TABLE_NAME%_InventoryNumberID` (`ID` ASC) ,'
-      '  INDEX `%TABLE_NAME%_MateriallyAccountableID` (`ID` ASC) ,'
+      '  KEY `WorkstationID` (`WorkstationID`) ,'
+      '  KEY `InventoryNumberID` (`InventoryNumberID`) ,'
+      '  KEY `MateriallyAccountableID` (`MateriallyAccountableID`) ,'
+      '  INDEX `%TABLE_NAME%_WorkstationID` (`WorkstationID` ASC) ,'
+      
+        '  INDEX `%TABLE_NAME%_InventoryNumberID` (`InventoryNumberID` AS' +
+        'C) ,'
+      
+        '  INDEX `%TABLE_NAME%_MateriallyAccountableID` (`MateriallyAccou' +
+        'ntableID` ASC) ,'
       '  CONSTRAINT `%TABLE_NAME%_WorkstationID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`WorkstationID` )'
       '    REFERENCES `main`.`workstations` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE,'
       '  CONSTRAINT `%TABLE_NAME%_InventoryNumberID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`InventoryNumberID` )'
       '    REFERENCES `main`.`inventory_numbers` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE RESTRICT,'
       '  CONSTRAINT `%TABLE_NAME%_MateriallyAccountableID`'
-      '    FOREIGN KEY (`ID` )'
+      '    FOREIGN KEY (`MateriallyAccountableID` )'
       '    REFERENCES `main`.`users` (`ID` )'
       '    ON DELETE RESTRICT'
       '    ON UPDATE CASCADE)'

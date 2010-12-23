@@ -35,10 +35,12 @@ CREATE TABLE IF NOT EXISTS `main`.`users` (
   `FirstName` TEXT NOT NULL COMMENT 'Имя пользователя.' ,
   `SecondName` TEXT NOT NULL COMMENT 'Фамилия пользователя.' ,
   `AdditionalName` TEXT NULL COMMENT 'Дополнительное поле для сложных и длинных имён.' ,
+  `DivisionID` INT UNSIGNED NOT NULL COMMENT 'Подразделение пользователя.' ,
   PRIMARY KEY (`ID`) ,
-  INDEX `Users_DivisionID` (`ID` ASC) ,
+  KEY `DivisionID` (`DivisionID`) ,
+  INDEX `Users_DivisionID` (`DivisionID` ASC) ,
   CONSTRAINT `Users_DivisionID`
-    FOREIGN KEY (`ID` )
+    FOREIGN KEY (`DivisionID` )
     REFERENCES `main`.`divisions` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
@@ -49,16 +51,20 @@ CREATE TABLE IF NOT EXISTS `main`.`repairs` (
   `ID` INT UNSIGNED NULL AUTO_INCREMENT ,
   `RepairDateTime` DATETIME NOT NULL COMMENT 'Дата и время ремонта.' ,
   `Description` LONGTEXT NOT NULL COMMENT 'Описание ремонта.' ,
+  `InventoryNumberID` INT UNSIGNED NOT NULL COMMENT 'Инвентарный номер ремонтируемого объекта.' ,
+  `SpecialistID` INT UNSIGNED NOT NULL COMMENT 'Специалист, производивший ремонт.' ,
   PRIMARY KEY (`ID`) ,
-  INDEX `Repairs_InventoryNumberID` (`ID` ASC) ,
-  INDEX `Repairs_SpecialistID` (`ID` ASC) ,
+  KEY `InventoryNumberID` (`InventoryNumberID`) ,
+  KEY `SpecialistID` (`SpecialistID`) ,
+  INDEX `Repairs_InventoryNumberID` (`InventoryNumberID` ASC) ,
+  INDEX `Repairs_SpecialistID` (`SpecialistID` ASC) ,
   CONSTRAINT `Repairs_InventoryNumberID`
-    FOREIGN KEY (`ID` )
+    FOREIGN KEY (`InventoryNumberID` )
     REFERENCES `main`.`inventory_numbers` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
   CONSTRAINT `Repairs_SpecialistID`
-    FOREIGN KEY (`ID` )
+    FOREIGN KEY (`SpecialistID` )
     REFERENCES `main`.`users` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
@@ -71,23 +77,29 @@ CREATE TABLE IF NOT EXISTS `main`.`workstations` (
   `IPv6_Address` VARCHAR(39) NULL COMMENT 'IPv6-адрес рабочей станции.' ,
   `Name` TINYTEXT NULL COMMENT 'Имя рабочей станции.' ,
   `DomainOrWorkgroup` TINYTEXT NULL COMMENT 'Название домена/рабочей группы.' ,
-  `Comments` TINYTEXT NULL COMMENT 'Комментарии к рабочей станции' ,
+  `Comments` TINYTEXT NULL COMMENT 'Комментарии к рабочей станции.' ,
+  `InventoryNumberID` INT UNSIGNED NOT NULL COMMENT 'Инвентарный номер рабочей станции.' ,
+  `DivisionID` INT UNSIGNED NOT NULL COMMENT 'Подразделение рабочей станции.' ,
+  `MateriallyAccountableID` INT UNSIGNED NOT NULL COMMENT 'Материально ответственный.' ,
   PRIMARY KEY (`ID`) ,
-  INDEX `Workstations_InventoryNumberID` (`ID` ASC) ,
-  INDEX `Workstations_DivisionID` (`ID` ASC) ,
-  INDEX `Workstations_MateriallyAccountableID` (`ID` ASC) ,
+  KEY `InventoryNumberID` (`InventoryNumberID`) ,
+  KEY `DivisionID` (`DivisionID`) ,
+  KEY `MateriallyAccountableID` (`MateriallyAccountableID`) ,
+  INDEX `Workstations_InventoryNumberID` (`InventoryNumberID` ASC) ,
+  INDEX `Workstations_DivisionID` (`DivisionID` ASC) ,
+  INDEX `Workstations_MateriallyAccountableID` (`MateriallyAccountableID` ASC) ,
   CONSTRAINT `Workstations_InventoryNumberID`
-    FOREIGN KEY (`ID` )
+    FOREIGN KEY (`InventoryNumberID` )
     REFERENCES `main`.`inventory_numbers` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
   CONSTRAINT `Workstations_DivisionID`
-    FOREIGN KEY (`ID` )
+    FOREIGN KEY (`DivisionID` )
     REFERENCES `main`.`divisions` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
   CONSTRAINT `Workstations_MateriallyAccountableID`
-    FOREIGN KEY (`ID` )
+    FOREIGN KEY (`MateriallyAccountableID` )
     REFERENCES `main`.`users` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
@@ -109,16 +121,20 @@ CREATE TABLE IF NOT EXISTS `main`.`inventory_history` (
   `DateTimeFinished` DATETIME NOT NULL COMMENT 'Дата и время завершения процесса инвентаризации.' ,
   `Status` ENUM('deprecated', 'actual', 'verified', 'missing', 'new') NOT NULL COMMENT 'Статус конфигурации.' ,
   `TableRecordID` INT UNSIGNED NULL COMMENT 'ID записи в таблице, определяемой по FK TablesDictionaryID' ,
+  `SupervisorID` INT UNSIGNED NOT NULL COMMENT '' ,
+  `TablesDictionaryID` INT UNSIGNED NOT NULL COMMENT '' ,
   PRIMARY KEY (`ID`) ,
-  INDEX `SupervisorID` (`ID` ASC) ,
-  INDEX `TablesDictionaryID` (`ID` ASC) ,
-  CONSTRAINT `SupervisorID`
-    FOREIGN KEY (`ID` )
+  KEY `SupervisorID` (`SupervisorID`) ,
+  KEY `TablesDictionaryID` (`TablesDictionaryID`) ,
+  INDEX `InventoryHistory_SupervisorID` (`SupervisorID` ASC) ,
+  INDEX `InventoryHistory_TablesDictionaryID` (`TablesDictionaryID` ASC) ,
+  CONSTRAINT `InventoryHistory_SupervisorID`
+    FOREIGN KEY (`SupervisorID` )
     REFERENCES `main`.`users` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
-  CONSTRAINT `TablesDictionaryID`
-    FOREIGN KEY (`ID` )
+  CONSTRAINT `InventoryHistory_TablesDictionaryID`
+    FOREIGN KEY (`TablesDictionaryID` )
     REFERENCES `main`.`tables_dictionary` (`ID` )
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
