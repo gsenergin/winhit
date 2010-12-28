@@ -48,6 +48,10 @@ type
     actnExportWord: TAction;
     imglstActions: TImageList;
     SaveDialog: TSaveDialog;
+    Action1: TAction;
+    Action2: TAction;
+    Action3: TAction;
+    Action4: TAction;
     procedure FormShow(Sender: TObject);
     procedure actnStartScanExecute(Sender: TObject);
     procedure actnExportWordExecute(Sender: TObject);
