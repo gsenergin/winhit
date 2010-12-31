@@ -12,7 +12,7 @@ uses
   JvListView, JvComCtrls, JvExExtCtrls, JvExtComponent, JvPanel, Grids, DBGrids,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, JvExControls, JvDBLookup, ToolWin,
   ActnMan, ActnCtrls, PlatformDefaultStyleActnCtrls, ActnList, RibbonActnCtrls,
-  ImgList, JvDBComponents;
+  ImgList, JvDBComponents, DBInit, SysUtilsEx;
 
 type
   TfrmMain = class(TForm)
@@ -32,7 +32,6 @@ type
     JvPanel1: TJvPanel;
     jvdbgrdResults: TJvDBUltimGrid;
     Label1: TLabel;
-    jvdblkpcmbCategories: TJvDBLookupCombo;
     rbngrpScanType: TRibbonGroup;
     ActionManager: TActionManager;
     rbncmbxScanType: TRibbonComboBox;
@@ -52,10 +51,13 @@ type
     Action2: TAction;
     Action3: TAction;
     Action4: TAction;
+    cmbxCategories: TComboBox;
     procedure FormShow(Sender: TObject);
     procedure actnStartScanExecute(Sender: TObject);
     procedure actnExportWordExecute(Sender: TObject);
+    procedure cmbxCategoriesSelect(Sender: TObject);
   private
+    procedure InitCategoriesCombo;
     procedure SetDBGridExporters;
   public
     procedure Init;
@@ -66,7 +68,7 @@ var
 
 implementation
 
-uses Test, PassWord, SplashScreen;
+uses Test, PassWord, SplashScreen, Constants;
 
 {$R *.dfm}
 
@@ -82,6 +84,24 @@ end;
 procedure TfrmMain.actnStartScanExecute(Sender: TObject);
 begin
   //
+end;
+
+procedure TfrmMain.cmbxCategoriesSelect(Sender: TObject);
+  var
+    S, sDB, sTable : String;
+begin
+  dtmdlJvDBComponents.ZTable.Active := False;
+
+  S := cmbxCategories.Items[cmbxCategories.ItemIndex];
+  sDB := GetToken(S, 1, STR_SEPARATOR);
+  sTable := GetToken(S, 2, STR_SEPARATOR);
+
+  dtmdlJvDBComponents.ZConnection.Connected := False;
+  dtmdlJvDBComponents.ZConnection.Database := sDB;
+  dtmdlJvDBComponents.ZConnection.Connected := True;
+
+  dtmdlJvDBComponents.ZTable.TableName := sTable;
+  dtmdlJvDBComponents.ZTable.Active := True;
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);
@@ -108,9 +128,14 @@ begin
   jvdbgrdResults.DataSource := dtmdlJvDBComponents.JvDataSource;
   If dtmdlJvDBComponents.ConnectToDB Then
   begin
-    dtmdlJvDBComponents.ZTable.TableName := 'divisions';
-    dtmdlJvDBComponents.ZTable.Active := True;
+    dtmdlDBInit.InitDB;
+    InitCategoriesCombo;
   end;
+end;
+
+procedure TfrmMain.InitCategoriesCombo;
+begin
+  cmbxCategories.Items.Assign(TablesList);
 end;
 
 procedure TfrmMain.SetDBGridExporters;

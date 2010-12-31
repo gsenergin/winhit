@@ -15,6 +15,7 @@ const
 
   STR_REPLACE_TABLENAME = '%TABLE_NAME%';
   STR_REPLACE_WMIINFO = '%WMI_INFO%';
+  STR_SEPARATOR = '|';
 
   { PassWord.pas }
 
