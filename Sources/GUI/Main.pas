@@ -7,16 +7,15 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, sSkinProvider, sSkinManager, XPMan,
+  Dialogs, StdCtrls, sSkinProvider, sSkinManager, XPMan, ComObj,
   RibbonLunaStyleActnCtrls, Ribbon, ComCtrls, ExtCtrls, JvExComCtrls,
   JvListView, JvComCtrls, JvExExtCtrls, JvExtComponent, JvPanel, Grids, DBGrids,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, JvExControls, JvDBLookup, ToolWin,
   ActnMan, ActnCtrls, PlatformDefaultStyleActnCtrls, ActnList, RibbonActnCtrls,
-  ImgList, JvDBComponents, DBInit, SysUtilsEx;
+  ImgList, JvDBComponents, DBInit, SysUtilsEx, JvDBGridExport;
 
 type
   TfrmMain = class(TForm)
-    SkinManager: TsSkinManager;
     XPManifest: TXPManifest;
     rbnMain: TRibbon;
     rbnpgInventory: TRibbonPage;
@@ -47,18 +46,23 @@ type
     actnExportWord: TAction;
     imglstActions: TImageList;
     SaveDialog: TSaveDialog;
-    Action1: TAction;
-    Action2: TAction;
-    Action3: TAction;
-    Action4: TAction;
+    actnExportExcel: TAction;
+    actnExportHTML: TAction;
+    actnExportXML: TAction;
+    actnExportCSV: TAction;
     cmbxCategories: TComboBox;
     procedure FormShow(Sender: TObject);
     procedure actnStartScanExecute(Sender: TObject);
     procedure actnExportWordExecute(Sender: TObject);
     procedure cmbxCategoriesSelect(Sender: TObject);
+    procedure actnExportExcelExecute(Sender: TObject);
+    procedure actnExportHTMLExecute(Sender: TObject);
+    procedure actnExportXMLExecute(Sender: TObject);
+    procedure actnExportCSVExecute(Sender: TObject);
   private
+    function  GetExportFileExt(const Exporter : TJvCustomDBGridExport) : String;
+    procedure ExportGrid(const Exporter : TJvCustomDBGridExport);
     procedure InitCategoriesCombo;
-    procedure SetDBGridExporters;
   public
     procedure Init;
   end;
@@ -72,13 +76,29 @@ uses Test, PassWord, SplashScreen, Constants;
 
 {$R *.dfm}
 
+procedure TfrmMain.actnExportCSVExecute(Sender: TObject);
+begin
+  ExportGrid(dtmdlJvDBComponents.JvDBGridCSVExport);
+end;
+
+procedure TfrmMain.actnExportExcelExecute(Sender: TObject);
+begin
+  ExportGrid(dtmdlJvDBComponents.JvDBGridExcelExport);
+end;
+
+procedure TfrmMain.actnExportHTMLExecute(Sender: TObject);
+begin
+  ExportGrid(dtmdlJvDBComponents.JvDBGridHTMLExport);
+end;
+
 procedure TfrmMain.actnExportWordExecute(Sender: TObject);
 begin
-  If SaveDialog.Execute(self.Handle) Then
-  begin
-    dtmdlJvDBComponents.JvDBGridWordExport.FileName := SaveDialog.FileName;
-    dtmdlJvDBComponents.JvDBGridWordExport.ExportGrid;
-  end;
+  ExportGrid(dtmdlJvDBComponents.JvDBGridWordExport);
+end;
+
+procedure TfrmMain.actnExportXMLExecute(Sender: TObject);
+begin
+  ExportGrid(dtmdlJvDBComponents.JvDBGridXMLExport);
 end;
 
 procedure TfrmMain.actnStartScanExecute(Sender: TObject);
@@ -88,20 +108,39 @@ end;
 
 procedure TfrmMain.cmbxCategoriesSelect(Sender: TObject);
   var
-    S, sDB, sTable : String;
+    S : String;
 begin
+  S := cmbxCategories.Items[cmbxCategories.ItemIndex];  // Имя таблицы
+  dtmdlJvDBComponents.SetCurrentDB(TablesDictionary.Items[S]);  // Имя БД
+
   dtmdlJvDBComponents.ZTable.Active := False;
-
-  S := cmbxCategories.Items[cmbxCategories.ItemIndex];
-  sDB := GetToken(S, 1, STR_SEPARATOR);
-  sTable := GetToken(S, 2, STR_SEPARATOR);
-
-  dtmdlJvDBComponents.ZConnection.Connected := False;
-  dtmdlJvDBComponents.ZConnection.Database := sDB;
-  dtmdlJvDBComponents.ZConnection.Connected := True;
-
-  dtmdlJvDBComponents.ZTable.TableName := sTable;
+  dtmdlJvDBComponents.ZTable.TableName := S;
   dtmdlJvDBComponents.ZTable.Active := True;
+end;
+
+procedure TfrmMain.ExportGrid(const Exporter: TJvCustomDBGridExport);
+  var
+    sFileName, sFileExt : String;
+begin
+  sFileExt := GetExportFileExt(Exporter);
+  SaveDialog.Filter := AnsiUpperCase(DeleteEx(sFileExt, 1, 1)) + '-files|*' + sFileExt;
+  SaveDialog.FileName := ValidateFileName(DateTimeToStr(Now));
+
+  If SaveDialog.Execute(Handle) Then
+  begin
+    Exporter.Grid := jvdbgrdResults;
+
+    sFileName := SaveDialog.FileName;
+    If Not AnsiSameText(ExtractFileExt(sFileName), sFileExt) Then
+      sFileName := sFileName + sFileExt;
+    Exporter.FileName := sFileName;
+
+    Try
+      Exporter.ExportGrid;
+    Except
+      on E:EOleSysError do else raise;  // Supressing strange OLE exception
+    End;
+  end;
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);
@@ -122,9 +161,18 @@ begin
   End;
 end;
 
+function TfrmMain.GetExportFileExt(
+  const Exporter: TJvCustomDBGridExport): String;
+begin
+  If Exporter is TJvDBGridExcelExport Then Result := '.xls' Else
+  If Exporter is TJvDBGridWordExport Then Result := '.doc' Else
+  If Exporter is TJvDBGridHTMLExport Then Result := '.htm' Else
+  If Exporter is TJvDBGridXMLExport Then Result := '.xml' Else
+  If Exporter is TJvDBGridCSVExport Then Result := '.txt' Else Result := '';
+end;
+
 procedure TfrmMain.Init;
 begin
-  SetDBGridExporters;
   jvdbgrdResults.DataSource := dtmdlJvDBComponents.JvDataSource;
   If dtmdlJvDBComponents.ConnectToDB Then
   begin
@@ -135,19 +183,7 @@ end;
 
 procedure TfrmMain.InitCategoriesCombo;
 begin
-  cmbxCategories.Items.Assign(TablesList);
-end;
-
-procedure TfrmMain.SetDBGridExporters;
-begin
-  With dtmdlJvDBComponents do
-  begin
-    JvDBGridExcelExport.Grid := jvdbgrdResults;
-    JvDBGridWordExport.Grid := jvdbgrdResults;
-    JvDBGridHTMLExport.Grid := jvdbgrdResults;
-    JvDBGridXMLExport.Grid := jvdbgrdResults;
-    JvDBGridCSVExport.Grid := jvdbgrdResults;
-  end;
+  dtmdlJvDBComponents.FillAllTables(cmbxCategories.Items);
 end;
 
 end.

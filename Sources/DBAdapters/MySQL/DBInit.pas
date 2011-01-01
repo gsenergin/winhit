@@ -36,19 +36,12 @@ type
     procedure InitDB;
   end;
 
-  function TablesList : TStringList;
-
 var
   dtmdlDBInit: TdtmdlDBInit;
 
 implementation
 
 {$R *.dfm}
-
-function TablesList : TStringList;
-begin
-  Result := TSingleton.GetInstance<TStringList>;
-end;
 
 { TdtmdlDBInit }
 
@@ -68,9 +61,6 @@ begin
     begin
       L.Assign(zqCreateHardwareTables.SQL); // backup template for next iteration
       GenerateCreateTableScript(TWMIBase(Cmp), zqCreateHardwareTables.SQL);
-
-      TablesList.Add('hardware_config' + STR_SEPARATOR + TWMIBase(Cmp).Name);
-
       ExecuteSQL(zqCreateHardwareTables.SQL);
       zqCreateHardwareTables.SQL.Assign(L);
     end;
@@ -83,14 +73,7 @@ end;
 ///  Создание главных таблиц, реализующих основную бизнес-логику.
 /// </summary>
 procedure TdtmdlDBInit.CreateMainTables;
-  var
-    S : String;
 begin
-  For S in zqCreateMainTables.SQL do
-  begin
-    If AnsiContainsText(S, 'CREATE TABLE') Then
-      TablesList.Add('main' + STR_SEPARATOR + GetToken(S, 4, '`'));  { TODO : dangerous }
-  end;
   ExecuteSQL(zqCreateMainTables.SQL);
 end;
 
@@ -118,7 +101,6 @@ begin
     begin
       L.Assign(zqCreateSoftwareTables.SQL); // backup template for next iteration
       GenerateCreateTableScript(TWMIBase(Cmp), zqCreateSoftwareTables.SQL);
-      TablesList.Add('software_config' + STR_SEPARATOR + TWMIBase(Cmp).Name);
       ExecuteSQL(zqCreateSoftwareTables.SQL);
       zqCreateSoftwareTables.SQL.Assign(L);
     end;
