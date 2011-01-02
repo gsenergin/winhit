@@ -19,7 +19,8 @@ uses
   SettingsBase in 'SettingsBase.pas',
   DBConnector in 'DBAdapters\MySQL\DBConnector.pas' {dtmdlDBConnector: TDataModule},
   PassWord in 'GUI\PassWord.pas' {PasswordDlg},
-  JvDBComponents in 'DBAdapters\MySQL\JvDBComponents.pas' {dtmdlJvDBComponents: TDataModule};
+  JvDBComponents in 'DBAdapters\MySQL\JvDBComponents.pas' {dtmdlJvDBComponents: TDataModule},
+  DBAppendData in 'WorkstationScanning\DBAppendData.pas';
 
 {$R *.res}
 {$I 'PEFlags.inc'}

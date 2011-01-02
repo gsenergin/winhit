@@ -1,0 +1,1 @@
+﻿SELECT * FROM `main`.`users` JOIN `main`.`divisions` ON `main`.`users`.`divisionid` = `main`.`divisions`.`id`;
