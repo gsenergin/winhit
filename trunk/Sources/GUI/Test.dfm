@@ -19,7 +19,7 @@ object frmTest: TfrmTest
     Top = 0
     Width = 778
     Height = 534
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -59,6 +59,15 @@ object frmTest: TfrmTest
         Caption = 'btnFillDBWithDIVISIONS'
         TabOrder = 3
         OnClick = btnFillDBWithDIVISIONSClick
+      end
+      object btnBuildInsertQuery: TButton
+        Left = 140
+        Top = 39
+        Width = 133
+        Height = 25
+        Caption = 'btnBuildInsertQuery'
+        TabOrder = 4
+        OnClick = btnBuildInsertQueryClick
       end
     end
     object TabSheet2: TTabSheet

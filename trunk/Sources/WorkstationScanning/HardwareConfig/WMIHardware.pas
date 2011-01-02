@@ -31,7 +31,7 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
+    function ScanHost(const Host : String) : Boolean;
   end;
 
 var
@@ -40,5 +40,12 @@ var
 implementation
 
 {$R *.dfm}
+
+{ TdtmdlWMIHardware }
+
+function TdtmdlWMIHardware.ScanHost(const Host: String): Boolean;
+begin
+  //
+end;
 
 end.

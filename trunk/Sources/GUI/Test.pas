@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls;
+  Dialogs, StdCtrls, ComCtrls, MySQLAdapter, RTTI, Generics.Collections;
 
 type
   TfrmTest = class(TForm)
@@ -17,12 +17,14 @@ type
     TabSheet2: TTabSheet;
     btnSavePassword: TButton;
     btnLoadPasswordHash: TButton;
+    btnBuildInsertQuery: TButton;
     procedure btnSaveDBSettingsClick(Sender: TObject);
     procedure btnLoadDBSettingsClick(Sender: TObject);
     procedure btnDBInitClick(Sender: TObject);
     procedure btnFillDBWithDIVISIONSClick(Sender: TObject);
     procedure btnSavePasswordClick(Sender: TObject);
     procedure btnLoadPasswordHashClick(Sender: TObject);
+    procedure btnBuildInsertQueryClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -37,6 +39,27 @@ implementation
 uses AppSettingsSource, DBInit;
 
 {$R *.dfm}
+
+procedure TfrmTest.btnBuildInsertQueryClick(Sender: TObject);
+  var
+    Arr : TList<TValue>;
+    L : TStringList;
+begin
+  Arr := TList<TValue>.Create;
+  Arr.Add(TValue.From('Val1'));
+  Arr.Add(TValue.From('Val2'));
+  Arr.Add(TValue.From('Val3'));
+
+  L := TStringList.Create;
+  L.Add('Col1');
+  L.Add('Col2');
+  L.Add('Col3');
+
+  ShowMessage(InsertQuery('main', 'divisions', L, Arr));
+
+  Arr.Free;
+  L.Free;
+end;
 
 procedure TfrmTest.btnDBInitClick(Sender: TObject);
 begin

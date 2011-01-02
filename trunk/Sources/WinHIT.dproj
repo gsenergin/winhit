@@ -81,6 +81,7 @@
 				<Form>dtmdlJvDBComponents</Form>
 				<DesignClass>TDataModule</DesignClass>
 			</DCCReference>
+			<DCCReference Include="WorkstationScanning\DBAppendData.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
