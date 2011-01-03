@@ -3,21 +3,112 @@ unit MySQLHelpers;
 interface
 
 uses
-  SysUtils, RTTI, TypInfo, Spring.DesignPatterns, Generics.Collections;
+  Windows, SysUtils, RTTI, TypInfo, Spring.DesignPatterns, Generics.Collections,
+  StrUtils, SysUtilsEx;
 
 type
 
+  /// <summary>
+  ///  Структура для работы с FK в базе данных.
+  /// </summary>
+  /// <comments>
+  ///  Хранит информацию о том, какая колонка данной таблицы ссылается
+  ///  на какую колонку какой таблицы какой схемы.
+  /// </comments>
+  TForeignKeyInfo = record
+    ColumnName : String;
+    ReferencesSchema, ReferencesTable, ReferencesColumn : String;
+  end;
+
+  /// <summary>
+  ///  Словарь для хранения FK-связей конкретной таблицы.
+  ///  В качестве Values (значений) возвращаются списки записей типа TForeignKeyInfo.
+  /// </summary>
+  /// <remarks>
+  ///  Наследник дженерика-словаря для использования в качестве синглтона.
+  ///  Сделано так, потому что синглтону требуется конструктор без параметров.
+  /// </remarks>
+  TForeignKeyDict = class (TDictionary<String, TList<TForeignKeyInfo>>)
+    public
+      constructor Create;
+  end;
+
+  /// <summary>
+  ///  Словарь соответсвий таблиц и их схем.
+  /// </summary>
+  /// <remarks>
+  ///  Наследник дженерика-словаря для использования в качестве синглтона.
+  ///  Сделано так, потому что синглтону требуется конструктор без параметров.
+  /// </remarks>
   TTableDict = class (TDictionary<String, String>)
     public
       constructor Create;
   end;
 
-  function TablesDictionary : TTableDict;
+  { Standalone methods }
 
-  function MySQLDataType(const Source : TRTTIMember;
-                         const Instance : Pointer) : String;
+  procedure FillFKInfo(const CreateTableQuery : String;
+                       const FKInfoList : TList<TForeignKeyInfo>);
+  function  FKDictionary : TForeignKeyDict;
+  function  MySQLDataType(const Source : TRTTIMember;
+                          const Instance : Pointer) : String;
+  function  TablesDictionary : TTableDict;
 
 implementation
+
+/// <summary>
+///  Процедура, парсящая SQL-запрос CREATE TABLE на предмет FK constraint'ов.
+///  Обнаруженная информация возвращается в параметре FKInfoList.
+/// </summary>
+/// <param name="CreateTableQuery">
+///  SQL-запрос CREATE TABLE.
+/// </param>
+/// <param name="FKInfoList">
+///  Дженерик-список записей, хранящих информацию об FK-связи.
+/// </param>
+procedure FillFKInfo(const CreateTableQuery : String;
+                     const FKInfoList : TList<TForeignKeyInfo>);
+  var
+    S : String;
+    FKInfo : TForeignKeyInfo;
+begin
+  Assert(Assigned(FKInfoList));
+
+  ZeroMemory(@FKInfo, SizeOf(TForeignKeyInfo));  // на всякий пожарный
+  S := CreateTableQuery;
+
+  If AnsiContainsText(S, 'CREATE TABLE') Then
+    While AnsiContainsText(S, 'FOREIGN KEY') do
+    begin
+      // Удалить всё включительно до буквы F в подстроке FOREIGN KEY,
+      // что сделает не выполняющимся условие цикла.
+      S := DeleteEx(S, 1, AnsiPosEx('FOREIGN KEY', S));
+
+      With FKInfo do
+      begin
+        ColumnName := GetToken(S, 2, '`'); { TODO : dangerous }
+
+        S := DeleteEx(S, 1, AnsiPosEx('REFERENCES', S));
+
+        ReferencesSchema := GetToken(S, 2, '`');  { TODO : dangerous }
+        ReferencesTable  := GetToken(S, 4, '`');  { TODO : dangerous }
+        ReferencesColumn := GetToken(S, 6, '`');  { TODO : dangerous }
+      end;
+
+      FKInfoList.Add(FKInfo);
+    end;
+end;
+
+/// <summary>
+///  Функция, возвращающая словарь для хранения FK-связей таблицы.
+/// </summary>
+/// <returns>
+///  Возвращает словарь в виде синглтона.
+/// </returns>
+function FKDictionary : TForeignKeyDict;
+begin
+  Result := TSingleton.GetInstance<TForeignKeyDict>;
+end;
 
 /// <summary>
 ///  Функция, возвращающая словарь соответствия таблиц и схем (БД).
@@ -121,9 +212,18 @@ begin
   End;
 end;
 
+//------------------------------------------------------------------------------
+
 { TTableDict }
 
 constructor TTableDict.Create;
+begin
+  Inherited Create;
+end;
+
+{ TForeignKeyDict }
+
+constructor TForeignKeyDict.Create;
 begin
   Inherited Create;
 end;
