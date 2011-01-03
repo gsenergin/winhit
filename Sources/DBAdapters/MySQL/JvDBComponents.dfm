@@ -2,11 +2,6 @@ inherited dtmdlJvDBComponents: TdtmdlJvDBComponents
   OldCreateOrder = True
   Height = 197
   Width = 358
-  object ZTable: TZTable
-    Connection = ZConnection
-    Left = 88
-    Top = 16
-  end
   object JvDataSource: TJvDataSource
     DataSet = ZTable
     Left = 160

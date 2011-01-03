@@ -10,7 +10,6 @@ uses
 
 type
   TdtmdlJvDBComponents = class(TdtmdlDBConnector)
-    ZTable: TZTable;
     JvDataSource: TJvDataSource;
     JvDBGridWordExport: TJvDBGridWordExport;
     JvDBGridExcelExport: TJvDBGridExcelExport;
