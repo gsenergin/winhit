@@ -7,7 +7,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, sSkinProvider, sSkinManager, XPMan, ComObj,
+  Dialogs, StdCtrls, sSkinProvider, sSkinManager, XPMan, ComObj, MySQLHelpers,
   RibbonLunaStyleActnCtrls, Ribbon, ComCtrls, ExtCtrls, JvExComCtrls,
   JvListView, JvComCtrls, JvExExtCtrls, JvExtComponent, JvPanel, Grids, DBGrids,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, JvExControls, JvDBLookup, ToolWin,

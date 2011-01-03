@@ -9,7 +9,7 @@ uses
   Windows, SysUtils, Classes, RTTI, TypInfo, ZConnection, DB, ZAbstractRODataset,
   ZAbstractDataset, ZDataset, ZDbcIntfs, CWMIBase, StrUtils, Dialogs,
   AppSettingsSource, WMIHardware, WMISoftware, MySQLHelpers, SysUtilsEx,
-  ZSqlMonitor, Constants, Spring.DesignPatterns;
+  ZSqlMonitor, Constants;
 
 type
   TdtmdlDBInit = class(TDataModule)

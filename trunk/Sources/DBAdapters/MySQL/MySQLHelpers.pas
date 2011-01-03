@@ -3,12 +3,32 @@ unit MySQLHelpers;
 interface
 
 uses
-  SysUtils, RTTI, TypInfo;
+  SysUtils, RTTI, TypInfo, Spring.DesignPatterns, Generics.Collections;
+
+type
+
+  TTableDict = class (TDictionary<String, String>)
+    public
+      constructor Create;
+  end;
+
+  function TablesDictionary : TTableDict;
 
   function MySQLDataType(const Source : TRTTIMember;
                          const Instance : Pointer) : String;
 
 implementation
+
+/// <summary>
+///  Функция, возвращающая словарь соответствия таблиц и схем (БД).
+/// </summary>
+/// <returns>
+///  Возвращает словарь в виде синглтона.
+/// </returns>
+function TablesDictionary : TTableDict;
+begin
+  Result := TSingleton.GetInstance<TTableDict>;
+end;
 
 /// <summary>
 ///  Функция для определения MySQL'ных аналогов типов данных из Delphi.
@@ -99,6 +119,13 @@ begin
         End;
       end;
   End;
+end;
+
+{ TTableDict }
+
+constructor TTableDict.Create;
+begin
+  Inherited Create;
 end;
 
 end.

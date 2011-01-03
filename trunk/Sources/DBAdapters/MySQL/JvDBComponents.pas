@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DBConnector, ZConnection, JvDBGridExport, JvComponentBase, DB,
   JvDataSource, ZAbstractRODataset, ZAbstractDataset, ZAbstractTable, ZDataset,
-  Constants, Generics.Collections, Spring.DesignPatterns;
+  Constants, MySQLHelpers;
 
 type
   TdtmdlJvDBComponents = class(TdtmdlDBConnector)
@@ -28,30 +28,12 @@ type
     procedure SetCurrentDB(const Database : String);
   end;
 
-  TTableDict = class (TDictionary<String, String>)
-    public
-      constructor Create;
-  end;
-
-  function TablesDictionary : TTableDict;
-
 var
   dtmdlJvDBComponents: TdtmdlJvDBComponents;
 
 implementation
 
 {$R *.dfm}
-
-/// <summary>
-///  Функция, возвращающая словарь соответствия таблиц и схем (БД).
-/// </summary>
-/// <returns>
-///  Возвращает словарь в виде синглтона.
-/// </returns>
-function TablesDictionary : TTableDict;
-begin
-  Result := TSingleton.GetInstance<TTableDict>;
-end;
 
 { TdtmdlJvDBComponents }
 
@@ -117,13 +99,6 @@ begin
   ZConnection.Connected := False;
   ZConnection.Database  := Database;
   ZConnection.Connected := True;
-end;
-
-{ TTableDict }
-
-constructor TTableDict.Create;
-begin
-  Inherited Create;
 end;
 
 end.

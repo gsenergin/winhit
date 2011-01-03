@@ -7,7 +7,7 @@ interface
 
 uses
   Classes, SysUtils, JvDBComponents, WMIHardware, WMISoftware, CWMIBase,
-  RTTI, TypInfo, StrUtils, Generics.Collections, MySQLAdapter;
+  RTTI, TypInfo, StrUtils, Generics.Collections, MySQLAdapter, MySQLHelpers;
 
   procedure AppendHardwareData;
   procedure AppendSoftwareData;
