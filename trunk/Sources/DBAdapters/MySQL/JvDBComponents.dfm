@@ -3,8 +3,8 @@ inherited dtmdlJvDBComponents: TdtmdlJvDBComponents
   Height = 197
   Width = 358
   object JvDataSource: TJvDataSource
-    DataSet = ZTable
-    Left = 160
+    DataSet = ZQuery
+    Left = 208
     Top = 16
   end
   object JvDBGridWordExport: TJvDBGridWordExport

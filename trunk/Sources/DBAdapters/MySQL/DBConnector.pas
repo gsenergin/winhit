@@ -7,13 +7,14 @@ interface
 
 uses
   Classes, ZConnection, AppSettingsSource, ZDataset, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZAbstractTable;
+  ZAbstractDataset, ZAbstractTable, ZSqlMonitor;
 
 type
   TdtmdlDBConnector = class(TDataModule)
     ZConnection: TZConnection;
     ZTable: TZTable;
     ZQuery: TZQuery;
+    ZSQLMonitor: TZSQLMonitor;
   private
     { Private declarations }
   public

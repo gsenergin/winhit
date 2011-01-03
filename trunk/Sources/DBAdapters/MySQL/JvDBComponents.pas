@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DBConnector, ZConnection, JvDBGridExport, JvComponentBase, DB,
   JvDataSource, ZAbstractRODataset, ZAbstractDataset, ZAbstractTable, ZDataset,
-  Constants, MySQLHelpers;
+  Constants, MySQLHelpers, ZSqlMonitor;
 
 type
   TdtmdlJvDBComponents = class(TdtmdlDBConnector)

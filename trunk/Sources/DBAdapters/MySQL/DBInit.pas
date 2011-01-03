@@ -66,6 +66,8 @@ begin
 
   If AnsiContainsText(S, 'CREATE TABLE') Then
   begin
+    If AnsiContainsText(S, STR_INSTALLEDSOFT_TABLENAME) Then
+      S := DeleteToken(S, 1, ';');
     Delete(S, 1, AnsiPosEx('CREATE TABLE', S));
     S := GetToken(S, 4, '`'); { TODO : dangerous }
 
