@@ -39,17 +39,41 @@ end;
 
 function SelectAllJoinFKQuery(const Table : String) : String;
   const
-    STR_QUERYBASE = 'SELECT * FROM `%s`.`%s` JOIN `%s`.`%s` ON %s';
-    STR_QUERYPART = '(`%s`.`%s`.`%s` = `%s`.`%s`.`%s`)';
-    STR_DELIM = ' AND ';
+    STR_QUERYBASE = 'SELECT * FROM `%s`.`%s` %s ;';
+    STR_QUERYPART = 'JOIN `%s`.`%s` ON (`%s`.`%s`.`%s` = `%s`.`%s`.`%s`) ';
 
   var
     FKInfo : TForeignKeyInfo;
+    sLeftTableSchema, {sLeftTableName,} sLeftTableColumn,
+    sRightTableSchema, sRightTableName, sRightTableColumn : String;
+    sQueryPart : String;
 begin
 {
 SELECT * FROM `main`.`users` JOIN `main`.`divisions`
 ON `main`.`users`.`divisionid` = `main`.`divisions`.`id`;
 }
+  Assert(Length(Table) > 0);
+
+  Result := '';
+  sQueryPart := '';
+  sLeftTableSchema := TablesDictionary.Items[Table];
+
+  For FKInfo in FKDictionary.Items[Table] do
+  begin
+    sLeftTableColumn := FKInfo.ColumnName;
+
+    sRightTableSchema := TablesDictionary.Items[FKInfo.ReferencesTable]; //FKInfo.ReferencesSchema
+    sRightTableName := FKInfo.ReferencesTable;
+    sRightTableColumn := FKInfo.ReferencesColumn;
+
+    sQueryPart := sQueryPart +
+                  Format(STR_QUERYPART,
+                         [sRightTableSchema, sRightTableName,
+                          sLeftTableSchema, Table, sLeftTableColumn,
+                          sRightTableSchema, sRightTableName, sRightTableColumn]);
+  end;
+
+  Result := Format(STR_QUERYBASE, [sLeftTableSchema, Table, sQueryPart]);
 end;
 
 end.

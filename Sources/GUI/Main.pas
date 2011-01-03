@@ -12,7 +12,7 @@ uses
   JvListView, JvComCtrls, JvExExtCtrls, JvExtComponent, JvPanel, Grids, DBGrids,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, JvExControls, JvDBLookup, ToolWin,
   ActnMan, ActnCtrls, PlatformDefaultStyleActnCtrls, ActnList, RibbonActnCtrls,
-  ImgList, JvDBComponents, DBInit, SysUtilsEx, JvDBGridExport;
+  ImgList, JvDBComponents, DBInit, SysUtilsEx, JvDBGridExport, MySQLAdapter;
 
 type
   TfrmMain = class(TForm)
@@ -113,7 +113,14 @@ begin
   S := cmbxCategories.Items[cmbxCategories.ItemIndex];  // Имя таблицы
   dtmdlJvDBComponents.SetCurrentDB(TablesDictionary.Items[S]);  // Имя БД
 
-  //joined tables
+  With dtmdlJvDBComponents do
+  begin
+    ZQuery.Active := False;
+    //JvDataSource.DataSet := ZQuery; // AV
+    ZQuery.SQL.Text := SelectAllJoinFKQuery(S);
+    ZQuery.Active := True;
+  end;
+
 end;
 
 procedure TfrmMain.ExportGrid(const Exporter: TJvCustomDBGridExport);
@@ -151,6 +158,11 @@ begin
       begin
         frmSplashScreen.ShowModal;
         WindowState := wsNormal;
+
+        { TODO : переделать на default values. }
+        frmTest.btnSavePasswordClick(nil);
+        frmTest.btnSaveDBSettingsClick(nil);
+
         frmTest.Show;
         Init;
       end;
