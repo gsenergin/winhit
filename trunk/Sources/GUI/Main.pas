@@ -113,9 +113,7 @@ begin
   S := cmbxCategories.Items[cmbxCategories.ItemIndex];  // Имя таблицы
   dtmdlJvDBComponents.SetCurrentDB(TablesDictionary.Items[S]);  // Имя БД
 
-  dtmdlJvDBComponents.ZTable.Active := False;
-  dtmdlJvDBComponents.ZTable.TableName := S;
-  dtmdlJvDBComponents.ZTable.Active := True;
+  //joined tables
 end;
 
 procedure TfrmMain.ExportGrid(const Exporter: TJvCustomDBGridExport);

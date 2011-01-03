@@ -6,11 +6,14 @@ unit DBConnector;
 interface
 
 uses
-  Classes, ZConnection, AppSettingsSource;
+  Classes, ZConnection, AppSettingsSource, ZDataset, DB, ZAbstractRODataset,
+  ZAbstractDataset, ZAbstractTable;
 
 type
   TdtmdlDBConnector = class(TDataModule)
     ZConnection: TZConnection;
+    ZTable: TZTable;
+    ZQuery: TZQuery;
   private
     { Private declarations }
   public
