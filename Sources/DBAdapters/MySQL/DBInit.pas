@@ -9,7 +9,7 @@ uses
   Windows, SysUtils, Classes, RTTI, TypInfo, ZConnection, DB, ZAbstractRODataset,
   ZAbstractDataset, ZDataset, ZDbcIntfs, CWMIBase, StrUtils, Dialogs,
   AppSettingsSource, WMIHardware, WMISoftware, MySQLHelpers, SysUtilsEx,
-  ZSqlMonitor, Constants;
+  ZSqlMonitor, Constants, Generics.Collections;
 
 type
   TdtmdlDBInit = class(TDataModule)
@@ -32,6 +32,8 @@ type
                                 const WMIProperties : TStrings);
     procedure GenerateCreateTableScript(const WMIComponent : TWMIBase;
                                         const SQLTemplate : TStrings);
+    procedure AddFKInfo(const CreateTableQuery : String); overload;
+    procedure AddFKInfo(const SQL : TStrings); overload;
   public
     procedure InitDB;
   end;
@@ -44,6 +46,50 @@ implementation
 {$R *.dfm}
 
 { TdtmdlDBInit }
+
+/// <summary>
+///  Извлечение из SQL-запроса CREATE TABLE информации об FK-связях таблицы
+///  и добавление её в специальный словарь.
+/// </summary>
+/// <param name="CreateTableQuery">
+///  SQL-запрос CREATE TABLE.
+/// </param>
+procedure TdtmdlDBInit.AddFKInfo(const CreateTableQuery: String);
+  var
+    FKList : TList<TForeignKeyInfo>;
+    S : String;
+begin
+  Assert(Length(CreateTableQuery) > 0);
+
+  FKList := TList<TForeignKeyInfo>.Create;
+  S := CreateTableQuery;
+
+  If AnsiContainsText(S, 'CREATE TABLE') Then
+  begin
+    Delete(S, 1, AnsiPosEx('CREATE TABLE', S));
+    S := GetToken(S, 4, '`'); { TODO : dangerous }
+
+    FillFKInfo(CreateTableQuery, FKList);
+    FKDictionary.Add(S, FKList);
+  end;
+
+  FreeAndNil(FKList);
+end;
+
+/// <summary>
+///  Обнаружение SQL-запроса CREATE TABLE в SQL-скрипте и извлечение из него
+///  информации об FK-связях при помощи перегруженного метода.
+/// </summary>
+/// <param name="SQL">
+///  SQL-скрипт.
+/// </param>
+procedure TdtmdlDBInit.AddFKInfo(const SQL: TStrings);
+  var
+    i : Integer;
+begin
+  For i := 1 To TokensNum(SQL.Text, ';') do
+    AddFKInfo(GetToken(SQL.Text, i, ';'));
+end;
 
 /// <summary>
 ///  Создание таблиц категории Hardware.
@@ -75,6 +121,7 @@ end;
 procedure TdtmdlDBInit.CreateMainTables;
 begin
   ExecuteSQL(zqCreateMainTables.SQL);
+  AddFKInfo(zqCreateMainTables.SQL);
 end;
 
 /// <summary>
@@ -215,6 +262,9 @@ begin
   S := StringReplace(S, STR_REPLACE_TABLENAME, WMIComponent.Name, [rfReplaceAll]);
   S := StringReplace(S, STR_REPLACE_WMIINFO, L.Text, [rfReplaceAll]);
   SQLTemplate.Text := S;
+
+  // Добавляем информацию о FK-связях генерируемой таблицы в словарь:
+  AddFKInfo(S);
 
   FreeAndNil(L);
 end;
