@@ -1,7 +1,7 @@
 object dtmdlDBInit: TdtmdlDBInit
   OldCreateOrder = False
   Height = 80
-  Width = 658
+  Width = 580
   object ZConnection: TZConnection
     Protocol = 'mysql-5'
     Left = 40
@@ -366,14 +366,6 @@ object dtmdlDBInit: TdtmdlDBInit
       'ENGINE = InnoDB;')
     Params = <>
     Left = 488
-    Top = 16
-  end
-  object zsqlmonDBInit: TZSQLMonitor
-    Active = True
-    AutoSave = True
-    FileName = 'DBInit.log'
-    MaxTraceCount = 100
-    Left = 592
     Top = 16
   end
 end

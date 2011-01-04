@@ -18,7 +18,6 @@ type
     zqCreateMainTables: TZQuery;
     zqCreateHardwareTables: TZQuery;
     zqCreateSoftwareTables: TZQuery;
-    zsqlmonDBInit: TZSQLMonitor;
   strict private
     FDBWasInitialized : Boolean;
   private
