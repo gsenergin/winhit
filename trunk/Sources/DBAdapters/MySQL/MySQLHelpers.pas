@@ -20,6 +20,8 @@ type
     ReferencesSchema, ReferencesTable, ReferencesColumn : String;
   end;
 
+  TForeignKeyList = class (TList<TForeignKeyInfo>) end;
+
   /// <summary>
   ///  Словарь для хранения FK-связей конкретной таблицы.
   ///  В качестве Values (значений) возвращаются списки записей типа TForeignKeyInfo.
@@ -28,7 +30,7 @@ type
   ///  Наследник дженерика-словаря для использования в качестве синглтона.
   ///  Сделано так, потому что синглтону требуется конструктор без параметров.
   /// </remarks>
-  TForeignKeyDict = class (TDictionary<String, TList<TForeignKeyInfo>>)
+  TForeignKeyDict = class (TDictionary<String, TForeignKeyList>)
     public
       constructor Create;
   end;
@@ -50,6 +52,7 @@ type
   procedure FillFKInfo(const CreateTableQuery : String;
                        const FKInfoList : TList<TForeignKeyInfo>);
   function  FKDictionary : TForeignKeyDict;
+  function  FKList : TForeignKeyList;
   function  MySQLDataType(const Source : TRTTIMember;
                           const Instance : Pointer) : String;
   function  TablesDictionary : TTableDict;
@@ -108,6 +111,11 @@ end;
 function FKDictionary : TForeignKeyDict;
 begin
   Result := TSingleton.GetInstance<TForeignKeyDict>;
+end;
+
+function FKList : TForeignKeyList;
+begin
+  Result := TSingleton.GetInstance<TForeignKeyList>;
 end;
 
 /// <summary>
