@@ -52,7 +52,6 @@ type
   procedure FillFKInfo(const CreateTableQuery : String;
                        const FKInfoList : TList<TForeignKeyInfo>);
   function  FKDictionary : TForeignKeyDict;
-  function  FKList : TForeignKeyList;
   function  MySQLDataType(const Source : TRTTIMember;
                           const Instance : Pointer) : String;
   function  TablesDictionary : TTableDict;
@@ -111,11 +110,6 @@ end;
 function FKDictionary : TForeignKeyDict;
 begin
   Result := TSingleton.GetInstance<TForeignKeyDict>;
-end;
-
-function FKList : TForeignKeyList;
-begin
-  Result := TSingleton.GetInstance<TForeignKeyList>;
 end;
 
 /// <summary>

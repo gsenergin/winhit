@@ -1,5 +1,6 @@
 object dtmdlDBConnector: TdtmdlDBConnector
   OldCreateOrder = False
+  OnCreate = DataModuleCreate
   Height = 76
   Width = 268
   object ZConnection: TZConnection

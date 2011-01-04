@@ -6,7 +6,7 @@ unit DBConnector;
 interface
 
 uses
-  Classes, ZConnection, AppSettingsSource, ZDataset, DB, ZAbstractRODataset,
+  SysUtils, Classes, ZConnection, AppSettingsSource, ZDataset, DB, ZAbstractRODataset,
   ZAbstractDataset, ZAbstractTable, ZSqlMonitor;
 
 type
@@ -15,6 +15,7 @@ type
     ZTable: TZTable;
     ZQuery: TZQuery;
     ZSQLMonitor: TZSQLMonitor;
+    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,6 +36,11 @@ begin
   DBSettings.LoadFromFile;
   ZConnection.Connected := DBSettings.SetUp(ZConnection);
   Result := ZConnection.Connected;
+end;
+
+procedure TdtmdlDBConnector.DataModuleCreate(Sender: TObject);
+begin
+  DeleteFile(ExpandFileName(ZSQLMonitor.FileName));
 end;
 
 end.
