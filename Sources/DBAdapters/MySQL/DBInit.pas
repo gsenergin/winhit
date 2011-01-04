@@ -56,7 +56,6 @@ implementation
 /// </param>
 procedure TdtmdlDBInit.AddFKInfo(const CreateTableQuery: String);
   var
-    FKList : TList<TForeignKeyInfo>;
     S : String;
 begin
   Assert(Length(CreateTableQuery) > 0);
@@ -76,8 +75,6 @@ begin
     FillFKInfo(CreateTableQuery, FKList);
     FKDictionary.Add(S, FKList);
   end;
-
-  FreeAndNil(FKList);
 end;
 
 /// <summary>
