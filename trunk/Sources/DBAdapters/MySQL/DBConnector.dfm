@@ -6,7 +6,8 @@ object dtmdlDBConnector: TdtmdlDBConnector
   object ZConnection: TZConnection
     Protocol = 'mysql-5'
     Properties.Strings = (
-      'codepage=cp1251')
+      'codepage=cp1251'
+      'compress=true')
     SQLHourGlass = True
     Left = 24
     Top = 16
