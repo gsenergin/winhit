@@ -60,7 +60,6 @@ procedure TdtmdlDBInit.AddFKInfo(const CreateTableQuery: String);
 begin
   Assert(Length(CreateTableQuery) > 0);
 
-  FKList := TList<TForeignKeyInfo>.Create;
   S := CreateTableQuery;
 
   If AnsiContainsText(S, 'CREATE TABLE') Then
