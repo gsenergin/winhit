@@ -56,10 +56,12 @@ implementation
 procedure TdtmdlDBInit.AddFKInfo(const CreateTableQuery: String);
   var
     S : String;
+    FKList : TForeignKeyList;
 begin
   Assert(Length(CreateTableQuery) > 0);
 
   S := CreateTableQuery;
+  FKList := TForeignKeyList.Create; // остаётся в памяти как мусор, но Free нельзя
 
   If AnsiContainsText(S, 'CREATE TABLE') Then
   begin
@@ -274,8 +276,6 @@ end;
 procedure TdtmdlDBInit.InitDB;
 begin
   If FDBWasInitialized Then Exit;
-
-  DeleteFile(ExpandFileName(zsqlmonDBInit.FileName));
 
   DBSettings.LoadFromFile;
   ZConnection.Connected := DBSettings.SetUp(ZConnection);
