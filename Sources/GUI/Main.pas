@@ -151,8 +151,7 @@ begin
     procedure (const task: IOmniTask)
     begin
       FreeAndNil(FScanThread);
-    end,
-    'HelloWorld');
+    end);
 end;
 
 procedure TfrmMain.cmbxCategoriesSelect(Sender: TObject);

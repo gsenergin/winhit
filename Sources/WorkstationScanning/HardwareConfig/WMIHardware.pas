@@ -39,13 +39,16 @@ var
 
 implementation
 
+uses DBAppendData, WMIDataCollector;
+
 {$R *.dfm}
 
 { TdtmdlWMIHardware }
 
 function TdtmdlWMIHardware.ScanHost(const Host: String): Boolean;
 begin
-  //
+  CollectWMIData(Host, Self);
+  AppendHardwareData;
 end;
 
 end.
