@@ -96,6 +96,7 @@
 			<DCCReference Include="GUI\InventoryNumberInput.pas">
 				<Form>frmInventoryNumberInput</Form>
 			</DCCReference>
+			<DCCReference Include="WorkstationScanning\WMIDataCollector.pas"/>
 			<BuildConfiguration Include="Debug">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

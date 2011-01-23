@@ -24,7 +24,8 @@ uses
   NetScan in 'WorkstationScanning\Network\NetScan.pas',
   IPRange in 'GUI\IPRange.pas' {frmIPRange},
   ManualInput in 'GUI\ManualInput.pas' {frmManualInput},
-  InventoryNumberInput in 'GUI\InventoryNumberInput.pas' {frmInventoryNumberInput};
+  InventoryNumberInput in 'GUI\InventoryNumberInput.pas' {frmInventoryNumberInput},
+  WMIDataCollector in 'WorkstationScanning\WMIDataCollector.pas';
 
 {$R *.res}
 {$I 'PEFlags.inc'}
