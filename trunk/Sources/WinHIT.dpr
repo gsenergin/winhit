@@ -22,7 +22,9 @@ uses
   JvDBComponents in 'DBAdapters\MySQL\JvDBComponents.pas' {dtmdlJvDBComponents: TDataModule},
   DBAppendData in 'WorkstationScanning\DBAppendData.pas',
   NetScan in 'WorkstationScanning\Network\NetScan.pas',
-  IPRange in 'GUI\IPRange.pas' {frmIPRange};
+  IPRange in 'GUI\IPRange.pas' {frmIPRange},
+  ManualInput in 'GUI\ManualInput.pas' {frmManualInput},
+  InventoryNumberInput in 'GUI\InventoryNumberInput.pas' {frmInventoryNumberInput};
 
 {$R *.res}
 {$I 'PEFlags.inc'}
@@ -40,5 +42,7 @@ begin
   Application.CreateForm(TPasswordDlg, PasswordDlg);
   Application.CreateForm(TdtmdlJvDBComponents, dtmdlJvDBComponents);
   Application.CreateForm(TfrmIPRange, frmIPRange);
+  Application.CreateForm(TfrmManualInput, frmManualInput);
+  Application.CreateForm(TfrmInventoryNumberInput, frmInventoryNumberInput);
   Application.Run;
 end.
