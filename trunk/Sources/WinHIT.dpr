@@ -20,7 +20,9 @@ uses
   DBConnector in 'DBAdapters\MySQL\DBConnector.pas' {dtmdlDBConnector: TDataModule},
   PassWord in 'GUI\PassWord.pas' {PasswordDlg},
   JvDBComponents in 'DBAdapters\MySQL\JvDBComponents.pas' {dtmdlJvDBComponents: TDataModule},
-  DBAppendData in 'WorkstationScanning\DBAppendData.pas';
+  DBAppendData in 'WorkstationScanning\DBAppendData.pas',
+  NetScan in 'WorkstationScanning\Network\NetScan.pas',
+  IPRange in 'GUI\IPRange.pas' {frmIPRange};
 
 {$R *.res}
 {$I 'PEFlags.inc'}
@@ -37,5 +39,6 @@ begin
   Application.CreateForm(TdtmdlDBConnector, dtmdlDBConnector);
   Application.CreateForm(TPasswordDlg, PasswordDlg);
   Application.CreateForm(TdtmdlJvDBComponents, dtmdlJvDBComponents);
+  Application.CreateForm(TfrmIPRange, frmIPRange);
   Application.Run;
 end.

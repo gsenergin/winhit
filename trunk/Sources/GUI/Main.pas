@@ -7,14 +7,17 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, sSkinProvider, sSkinManager, XPMan, ComObj, MySQLHelpers,
-  RibbonLunaStyleActnCtrls, Ribbon, ComCtrls, ExtCtrls, JvExComCtrls,
+  Dialogs, StdCtrls, XPMan, ComObj, MySQLHelpers, NetScan, OtlTaskControl,
+  RibbonLunaStyleActnCtrls, Ribbon, ComCtrls, ExtCtrls, JvExComCtrls, OtlTask,
   JvListView, JvComCtrls, JvExExtCtrls, JvExtComponent, JvPanel, Grids, DBGrids,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, JvExControls, JvDBLookup, ToolWin,
   ActnMan, ActnCtrls, PlatformDefaultStyleActnCtrls, ActnList, RibbonActnCtrls,
   ImgList, JvDBComponents, DBInit, SysUtilsEx, JvDBGridExport, MySQLAdapter;
 
 type
+
+  TScanType = (stAuto, stManual);
+
   TfrmMain = class(TForm)
     XPManifest: TXPManifest;
     rbnMain: TRibbon;
@@ -26,7 +29,6 @@ type
     tbshtScanResults: TTabSheet;
     StatusBar: TStatusBar;
     jvtrvWorkgroups: TJvTreeView;
-    jvlstvWorkstations: TJvListView;
     Splitter: TSplitter;
     JvPanel1: TJvPanel;
     jvdbgrdResults: TJvDBUltimGrid;
@@ -51,6 +53,12 @@ type
     actnExportXML: TAction;
     actnExportCSV: TAction;
     cmbxCategories: TComboBox;
+    lvWorkstations: TListView;
+    imglstNetRes: TImageList;
+    rbngrpIPRange: TRibbonGroup;
+    actnEnterIPRange: TAction;
+    actnAutoScan: TAction;
+    actnManualScan: TAction;
     procedure FormShow(Sender: TObject);
     procedure actnStartScanExecute(Sender: TObject);
     procedure actnExportWordExecute(Sender: TObject);
@@ -59,7 +67,15 @@ type
     procedure actnExportHTMLExecute(Sender: TObject);
     procedure actnExportXMLExecute(Sender: TObject);
     procedure actnExportCSVExecute(Sender: TObject);
+    procedure actnPauseScanExecute(Sender: TObject);
+    procedure actnStopScanExecute(Sender: TObject);
+    procedure actnEnterIPRangeExecute(Sender: TObject);
+    procedure actnAutoScanExecute(Sender: TObject);
+    procedure actnManualScanExecute(Sender: TObject);
   private
+    FScanThread : TScanThread;
+    FScanType : TScanType;
+
     function  GetExportFileExt(const Exporter : TJvCustomDBGridExport) : String;
     procedure ExportGrid(const Exporter : TJvCustomDBGridExport);
     procedure InitCategoriesCombo;
@@ -72,9 +88,19 @@ var
 
 implementation
 
-uses Test, PassWord, SplashScreen, Constants;
+uses Test, PassWord, SplashScreen, Constants, IPRange;
 
 {$R *.dfm}
+
+procedure TfrmMain.actnAutoScanExecute(Sender: TObject);
+begin
+  FScanType := stAuto;
+end;
+
+procedure TfrmMain.actnEnterIPRangeExecute(Sender: TObject);
+begin
+  frmIPRange.ShowModal;
+end;
 
 procedure TfrmMain.actnExportCSVExecute(Sender: TObject);
 begin
@@ -101,9 +127,32 @@ begin
   ExportGrid(dtmdlJvDBComponents.JvDBGridXMLExport);
 end;
 
+procedure TfrmMain.actnManualScanExecute(Sender: TObject);
+begin
+  FScanType := stManual;
+  actnEnterIPRange.Execute;
+end;
+
+procedure TfrmMain.actnPauseScanExecute(Sender: TObject);
+begin
+  If Assigned(FScanThread) Then FScanThread.Suspended := Not FScanThread.Suspended;
+end;
+
 procedure TfrmMain.actnStartScanExecute(Sender: TObject);
 begin
-  //
+  jvtrvWorkgroups.Items.Clear;
+  lvWorkstations.Clear;
+  FScanThread := TScanThread.Create;
+end;
+
+procedure TfrmMain.actnStopScanExecute(Sender: TObject);
+begin
+  CreateTask(
+    procedure (const task: IOmniTask)
+    begin
+      FreeAndNil(FScanThread);
+    end,
+    'HelloWorld');
 end;
 
 procedure TfrmMain.cmbxCategoriesSelect(Sender: TObject);
