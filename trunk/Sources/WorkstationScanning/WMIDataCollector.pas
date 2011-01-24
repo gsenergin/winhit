@@ -40,12 +40,13 @@ begin
 
           // Collect data in separate thread:
           EventMon.Monitor(
-          CreateTask(
-            procedure (const task: IOmniTask)
-            begin
-              Active := True;
-              Inc(iThreads);
-            end)).Run;
+            CreateTask(
+              procedure (const task: IOmniTask)
+              begin
+                Active := False;  // Это очистит от старых данных
+                Active := True;
+                Inc(iThreads);
+              end)).Run;
 
           // Это должно гарантировать, что процедура дождётся
           // окончания последнего запущенного потока:
