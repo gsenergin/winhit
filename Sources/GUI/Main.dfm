@@ -36,10 +36,54 @@ object frmMain: TfrmMain
         Caption = #1043#1077#1085#1077#1088#1072#1090#1086#1088' '#1086#1090#1095#1105#1090#1086#1074
         Page = rbnpgReports
       end>
+    TabIndex = 2
     DesignSize = (
       780
       143)
     StyleName = 'Ribbon - Luna'
+    object rbnpgInventory: TRibbonPage
+      Left = 0
+      Top = 50
+      Width = 779
+      Height = 93
+      Caption = #1055#1088#1086#1074#1077#1076#1077#1085#1080#1077' '#1080#1085#1074#1077#1085#1090#1072#1088#1080#1079#1072#1094#1080#1080
+      Index = 0
+      object rbngrpScanType: TRibbonGroup
+        Left = 4
+        Top = 3
+        Width = 158
+        Height = 86
+        ActionManager = ActionManager
+        Caption = #1042#1099#1073#1086#1088' '#1090#1080#1087#1072' '#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1080#1103
+        GroupIndex = 0
+        object rbncmbxScanType: TRibbonComboBox
+          Left = 104
+          Top = 5
+          Width = 36
+          Height = 17
+          ReadOnly = True
+          TabOrder = 0
+        end
+      end
+      object rbngrpScanManage: TRibbonGroup
+        Left = 164
+        Top = 3
+        Width = 169
+        Height = 86
+        ActionManager = ActionManager
+        Caption = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077' '#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1080#1077#1084
+        GroupIndex = 1
+      end
+      object rbngrpIPRange: TRibbonGroup
+        Left = 335
+        Top = 3
+        Width = 103
+        Height = 86
+        ActionManager = ActionManager
+        Caption = #1044#1080#1072#1087#1072#1079#1086#1085' IP-'#1072#1076#1088#1077#1089#1086#1074
+        GroupIndex = 2
+      end
+    end
     object rbnpgMonitoring: TRibbonPage
       Left = 0
       Top = 50
@@ -101,49 +145,6 @@ object frmMain: TfrmMain
         GroupIndex = 4
       end
     end
-    object rbnpgInventory: TRibbonPage
-      Left = 0
-      Top = 50
-      Width = 779
-      Height = 93
-      Caption = #1055#1088#1086#1074#1077#1076#1077#1085#1080#1077' '#1080#1085#1074#1077#1085#1090#1072#1088#1080#1079#1072#1094#1080#1080
-      Index = 0
-      object rbngrpScanType: TRibbonGroup
-        Left = 4
-        Top = 3
-        Width = 158
-        Height = 86
-        ActionManager = ActionManager
-        Caption = #1042#1099#1073#1086#1088' '#1090#1080#1087#1072' '#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1080#1103
-        GroupIndex = 0
-        object rbncmbxScanType: TRibbonComboBox
-          Left = 104
-          Top = 5
-          Width = 36
-          Height = 17
-          ReadOnly = True
-          TabOrder = 0
-        end
-      end
-      object rbngrpScanManage: TRibbonGroup
-        Left = 164
-        Top = 3
-        Width = 169
-        Height = 86
-        ActionManager = ActionManager
-        Caption = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077' '#1089#1082#1072#1085#1080#1088#1086#1074#1072#1085#1080#1077#1084
-        GroupIndex = 1
-      end
-      object rbngrpIPRange: TRibbonGroup
-        Left = 335
-        Top = 3
-        Width = 103
-        Height = 86
-        ActionManager = ActionManager
-        Caption = #1044#1080#1072#1087#1072#1079#1086#1085' IP-'#1072#1076#1088#1077#1089#1086#1074
-        GroupIndex = 2
-      end
-    end
   end
   object pgctrlMain: TPageControl
     Left = 0
@@ -198,6 +199,8 @@ object frmMain: TfrmMain
         SortType = stBoth
         TabOrder = 1
         ViewStyle = vsReport
+        OnChange = lvWorkstationsChange
+        OnCreateItemClass = lvWorkstationsCreateItemClass
       end
     end
     object tbshtScanResults: TTabSheet
@@ -404,7 +407,7 @@ object frmMain: TfrmMain
     Left = 600
     Top = 120
     Bitmap = {
-      494C0101060009001C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106000900280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       00000000000000000000000000000000000000000000F5F5F500DDDDDD00D1D1
       D100B9B9B90089898900717171007171710089898900B9B9B900D1D1D100DDDD
@@ -674,5 +677,9 @@ object frmMain: TfrmMain
       C000800000008000E000800000000000E000800000000000E01FC00100000000
       F03FE00300008007FFFFF00F0000FC3F00000000000000000000000000000000
       000000000000}
+  end
+  object OmniEventMon: TOmniEventMonitor
+    Left = 600
+    Top = 184
   end
 end

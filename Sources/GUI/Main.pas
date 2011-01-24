@@ -12,7 +12,8 @@ uses
   JvListView, JvComCtrls, JvExExtCtrls, JvExtComponent, JvPanel, Grids, DBGrids,
   JvExDBGrids, JvDBGrid, JvDBUltimGrid, JvExControls, JvDBLookup, ToolWin,
   ActnMan, ActnCtrls, PlatformDefaultStyleActnCtrls, ActnList, RibbonActnCtrls,
-  ImgList, JvDBComponents, DBInit, SysUtilsEx, JvDBGridExport, MySQLAdapter;
+  ImgList, JvDBComponents, DBInit, SysUtilsEx, JvDBGridExport, MySQLAdapter,
+  OtlEventMonitor, StrUtils;
 
 type
 
@@ -59,6 +60,7 @@ type
     actnEnterIPRange: TAction;
     actnAutoScan: TAction;
     actnManualScan: TAction;
+    OmniEventMon: TOmniEventMonitor;
     procedure FormShow(Sender: TObject);
     procedure actnStartScanExecute(Sender: TObject);
     procedure actnExportWordExecute(Sender: TObject);
@@ -72,9 +74,14 @@ type
     procedure actnEnterIPRangeExecute(Sender: TObject);
     procedure actnAutoScanExecute(Sender: TObject);
     procedure actnManualScanExecute(Sender: TObject);
+    procedure lvWorkstationsChange(Sender: TObject; Item: TListItem;
+      Change: TItemChange);
+    procedure lvWorkstationsCreateItemClass(Sender: TCustomListView;
+      var ItemClass: TListItemClass);
   private
     FScanThread : TScanThread;
     FScanType : TScanType;
+    FNewItemCreated : Boolean;
 
     function  GetExportFileExt(const Exporter : TJvCustomDBGridExport) : String;
     procedure ExportGrid(const Exporter : TJvCustomDBGridExport);
@@ -88,7 +95,7 @@ var
 
 implementation
 
-uses Test, PassWord, SplashScreen, Constants, IPRange;
+uses Test, PassWord, SplashScreen, Constants, IPRange, WMISoftware, WMIHardware;
 
 {$R *.dfm}
 
@@ -242,6 +249,44 @@ end;
 procedure TfrmMain.InitCategoriesCombo;
 begin
   dtmdlJvDBComponents.FillAllTables(cmbxCategories.Items);
+end;
+
+procedure TfrmMain.lvWorkstationsChange(Sender: TObject; Item: TListItem;
+  Change: TItemChange);
+  var
+    iIPAddrCol : Integer;
+    sCurrentHost : String;
+begin
+  If FNewItemCreated And (Change = ctText) Then
+  begin
+    FNewItemCreated := False;
+    iIPAddrCol := -1;
+
+    For iIPAddrCol := 0 To lvWorkstations.Columns.Count - 1 do
+      If AnsiSameText(lvWorkstations.Columns.Items[iIPAddrCol].Caption,
+                      'IP адрес') Then Break;
+
+    sCurrentHost := Item.SubItems[iIPAddrCol];
+
+    OmniEventMon.Monitor(
+      CreateTask(
+        procedure (const task: IOmniTask)
+        begin
+          dtmdlWMIHardware.ScanHost(sCurrentHost);
+          dtmdlWMISoftware.ScanHost(sCurrentHost);
+        end)).Run;
+
+    // IOmniThreadPool - возможно, стоит дл€ кучи потоков использовать его,
+    // причЄм в модуле WMIDataCollector тоже.
+    { TODO : см. выше }
+  end;
+end;
+
+procedure TfrmMain.lvWorkstationsCreateItemClass(Sender: TCustomListView;
+  var ItemClass: TListItemClass);
+begin
+  // «апоминаем, что текущее изменение - это создание нового элемента:
+  FNewItemCreated := True;
 end;
 
 end.

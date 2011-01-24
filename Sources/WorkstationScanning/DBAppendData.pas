@@ -75,7 +75,7 @@ begin
         InsertQuery(TablesDictionary.Items[TWMIBase(Cmp).Name],
                     TWMIBase(Cmp).Name, Columns, PropVals));
 
-        { TODO : необходимо учитывать FK колонки }
+        { TODO : необходимо учитывать FK колонки и специфичные не WMI-данные }
     end;
   end;
 
@@ -108,5 +108,7 @@ begin
   FreeAndNil(PropVals);
   FreeAndNil(Columns);
 end;
+
+{ TODO : при выполнении SQl.ExecuteDriect следует пользоваться TCriticalSection }
 
 end.
