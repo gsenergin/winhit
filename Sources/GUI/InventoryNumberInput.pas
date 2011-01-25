@@ -1,5 +1,8 @@
 unit InventoryNumberInput;
 
+{$I 'GlobalDefines.inc'}
+{$I 'SharedUnitDirectives.inc'}
+
 interface
 
 uses

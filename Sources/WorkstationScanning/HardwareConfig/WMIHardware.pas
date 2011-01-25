@@ -47,8 +47,13 @@ uses DBAppendData, WMIDataCollector;
 
 function TdtmdlWMIHardware.ScanHost(const Host: String): Boolean;
 begin
-  CollectWMIData(Host, Self);
-  AppendHardwareData;
+  Try
+    CollectWMIData(Host, Self);
+    AppendHardwareData;
+    Exit(True);
+  Except
+    Exit(False);
+  End;
 end;
 
 end.

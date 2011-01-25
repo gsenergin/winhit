@@ -1,12 +1,15 @@
 unit JvDBComponents;
 
+{$I 'GlobalDefines.inc'}
+{$I 'SharedUnitDirectives.inc'}
+
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DBConnector, ZConnection, JvDBGridExport, JvComponentBase, DB,
   JvDataSource, ZAbstractRODataset, ZAbstractDataset, ZAbstractTable, ZDataset,
-  Constants, MySQLHelpers, ZSqlMonitor;
+  Constants, MySQLHelpers, ZSqlMonitor, ZAbstractConnection;
 
 type
   TdtmdlJvDBComponents = class(TdtmdlDBConnector)

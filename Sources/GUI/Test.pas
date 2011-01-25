@@ -1,5 +1,8 @@
 unit Test;
 
+{$I 'GlobalDefines.inc'}
+{$I 'SharedUnitDirectives.inc'}
+
 interface
 
 uses

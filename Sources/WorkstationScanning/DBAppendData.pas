@@ -20,7 +20,7 @@ procedure FillWMIPropValues(const WMIComponent: TWMIBase;
     Context, Context2 : TRTTIContext;
     Prop, Prop2 : TRTTIProperty;
     Val : TValue;
-    S : String;
+    //S : String;
 begin
   Assert(Assigned(WMIComponent));
   Assert(Assigned(WMIPropValues));

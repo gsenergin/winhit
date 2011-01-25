@@ -260,7 +260,6 @@ begin
   If FNewItemCreated And (Change = ctText) Then
   begin
     FNewItemCreated := False;
-    iIPAddrCol := -1;
 
     For iIPAddrCol := 0 To lvWorkstations.Columns.Count - 1 do
       If AnsiSameText(lvWorkstations.Columns.Items[iIPAddrCol].Caption,

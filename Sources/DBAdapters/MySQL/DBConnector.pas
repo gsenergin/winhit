@@ -6,8 +6,8 @@ unit DBConnector;
 interface
 
 uses
-  SysUtils, Classes, ZConnection, AppSettingsSource, ZDataset, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZAbstractTable, ZSqlMonitor;
+  Windows, SysUtils, Classes, ZConnection, AppSettingsSource, ZDataset, DB, ZAbstractRODataset,
+  ZAbstractDataset, ZAbstractTable, ZSqlMonitor, ZAbstractConnection;
 
 type
   TdtmdlDBConnector = class(TDataModule)

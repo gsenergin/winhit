@@ -1,5 +1,8 @@
 unit ManualInput;
 
+{$I 'GlobalDefines.inc'}
+{$I 'SharedUnitDirectives.inc'}
+
 interface
 
 uses
