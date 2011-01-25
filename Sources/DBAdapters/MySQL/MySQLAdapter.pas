@@ -8,13 +8,14 @@ interface
 uses
   Classes, SysUtils, Generics.Collections, RTTI, SysUtilsEx, MySQLHelpers;
 
-  function InsertQuery(const Schema, Table : String; const Columns : TStrings;
+  function InsertQuery(const Table : String; const Columns : TStrings;
                        const Values : TList<TValue>) : String;
   function SelectAllJoinFKQuery(const Table : String) : String;
+  function SelectValueQuery(const Table, Column, WhereCondition : String) : String;
 
 implementation
 
-function InsertQuery(const Schema, Table : String; const Columns : TStrings;
+function InsertQuery(const Table : String; const Columns : TStrings;
                      const Values : TList<TValue>) : String;
   const
     STR_QUERYBASE = 'INSERT INTO `%s`.`%s` (%s) VALUES (%s);';
@@ -34,7 +35,8 @@ VALUES ('Отдел продаж', '1-ый этаж');
   For Val in Values do
     sValues := AddToken(sValues, '`' + Val.AsVariant + '`', ',');
 
-  Result := Format(STR_QUERYBASE, [Schema, Table, sColumns, sValues]);
+  Result := Format(STR_QUERYBASE, [TablesDictionary.Items[Table], Table,
+                                   sColumns, sValues]);
 end;
 
 function SelectAllJoinFKQuery(const Table : String) : String;
@@ -74,6 +76,14 @@ ON `main`.`users`.`divisionid` = `main`.`divisions`.`id`;
   end;
 
   Result := Format(STR_QUERYBASE, [sLeftTableSchema, Table, sQueryPart]);
+end;
+
+function SelectValueQuery(const Table, Column, WhereCondition : String) : String;
+  const
+    STR_QUERYBASE = 'SELECT `%s` FROM `%s`.`%s` WHERE %s ;';
+begin
+  Result := Format(STR_QUERYBASE, [Column, TablesDictionary.Items[Table],
+                                   Table, WhereCondition]);
 end;
 
 end.
