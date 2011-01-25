@@ -1,9 +1,12 @@
 unit NetScan;
 
+{$I 'GlobalDefines.inc'}
+{$I 'SharedUnitDirectives.inc'}
+
 interface
 
 uses
-  Windows, Classes, SysUtils, Forms, ComCtrls, WinSock;
+  Windows, Classes, SysUtils, Forms, ComCtrls, WinSock2;
 
 type
 

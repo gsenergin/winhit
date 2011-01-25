@@ -1,5 +1,8 @@
 unit WMIDataCollector;
 
+{$I 'GlobalDefines.inc'}
+{$I 'SharedUnitDirectives.inc'}
+
 interface
 
 uses
@@ -12,7 +15,7 @@ implementation
 
 type
 
-  TEventMonHelper = class helper for TOmniEventMonitor
+  TEventMonitor = class (TOmniEventMonitor)
     private
       FThreadPool : IOmniThreadPool;
       FEvent : TSimpleEvent;
@@ -28,15 +31,18 @@ type
 
 { TEventMonHelper }
 
-constructor TEventMonHelper.Create(AOwner: TComponent);
+constructor TEventMonitor.Create(AOwner: TComponent);
 begin
   Inherited;
   FEvent := TSimpleEvent.Create;
-  FThreadPool := CreateThreadPool.MonitorWith(Self);
+
+  Randomize;
+  FThreadPool := CreateThreadPool(IntToStr(Random(High(Integer)))).MonitorWith(Self);
+
   OnTaskTerminated := HandleTaskTerminated;
 end;
 
-destructor TEventMonHelper.Destroy;
+destructor TEventMonitor.Destroy;
 begin
   FThreadPool.CancelAll;
   FThreadPool := nil;
@@ -44,7 +50,7 @@ begin
   Inherited;
 end;
 
-procedure TEventMonHelper.HandleTaskTerminated(const task: IOmniTaskControl);
+procedure TEventMonitor.HandleTaskTerminated(const task: IOmniTaskControl);
 begin
   If (FThreadPool.CountQueued = 0) And (FThreadPool.CountExecuting = 0) Then
     FEvent.SetEvent;
@@ -55,9 +61,9 @@ end;
 procedure CollectWMIData(const TargetHost : String; const DM : TDataModule);
   var
     Cmp : TComponent;
-    EventMon : TOmniEventMonitor;
+    EventMon : TEventMonitor;
 begin
-  EventMon := TOmniEventMonitor.Create(DM);
+  EventMon := TEventMonitor.Create(DM);
 
   Try
     For Cmp in DM do
