@@ -74,8 +74,7 @@ begin
       dtmdlJvDBComponents.ZConnection.GetColumnNames(TWMIBase(Cmp).Name, '%', Columns);
 
       dtmdlJvDBComponents.ZConnection.ExecuteDirect(
-        InsertQuery(TablesDictionary.Items[TWMIBase(Cmp).Name],
-                    TWMIBase(Cmp).Name, Columns, PropVals));
+        InsertQuery(TWMIBase(Cmp).Name, Columns, PropVals));
 
         { TODO : необходимо учитывать FK колонки и специфичные не WMI-данные }
     end;
@@ -102,8 +101,7 @@ begin
       dtmdlJvDBComponents.ZConnection.GetColumnNames(TWMIBase(Cmp).Name, '%', Columns);
 
       dtmdlJvDBComponents.ZConnection.ExecuteDirect(
-        InsertQuery(TablesDictionary.Items[TWMIBase(Cmp).Name],
-                    TWMIBase(Cmp).Name, Columns, PropVals));
+        InsertQuery(TWMIBase(Cmp).Name, Columns, PropVals));
     end;
   end;
 

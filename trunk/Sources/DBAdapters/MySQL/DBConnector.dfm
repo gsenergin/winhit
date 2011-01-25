@@ -5,7 +5,6 @@ object dtmdlDBConnector: TdtmdlDBConnector
   Width = 268
   object ZConnection: TZConnection
     Properties.Strings = (
-      'codepage=ucs2'
       'compress=true')
     SQLHourGlass = True
     Protocol = 'mysql-5'

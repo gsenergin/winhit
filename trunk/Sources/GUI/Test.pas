@@ -58,7 +58,7 @@ begin
   L.Add('Col2');
   L.Add('Col3');
 
-  ShowMessage(InsertQuery('main', 'divisions', L, Arr));
+  ShowMessage(InsertQuery('divisions', L, Arr));
 
   Arr.Free;
   L.Free;
