@@ -20,7 +20,6 @@ procedure FillWMIPropValues(const WMIComponent: TWMIBase;
     Context, Context2 : TRTTIContext;
     Prop, Prop2 : TRTTIProperty;
     Val : TValue;
-    //S : String;
 begin
   Assert(Assigned(WMIComponent));
   Assert(Assigned(WMIPropValues));
@@ -39,10 +38,11 @@ begin
 
         For Prop2 in Context2.GetType(Val.AsObject.ClassType).GetDeclaredProperties do
         begin
-          If Prop2.IsReadable And (Prop2.Visibility = mvPublished) Then
+          If Prop2.IsReadable And (Prop2.Visibility = mvPublished) {And
+             Prop2.PropertyType.IsPublicType} Then
           begin
             Try
-              // if too much exceptions try to use Prop2.PropertyType in condition above
+              { TODO : if too much exceptions try to use Prop2.PropertyType in condition above }
               WMIPropValues.Add(Prop2.GetValue(Val.AsObject));
             Except
               Continue;
@@ -54,6 +54,8 @@ begin
     end;
   end;
 end;
+
+//------------------------------------------------------------------------------
 
 procedure AppendHardwareData;
   var

@@ -7,7 +7,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, ZConnection, AppSettingsSource, ZDataset, DB, ZAbstractRODataset,
-  ZAbstractDataset, ZAbstractTable, ZSqlMonitor, ZAbstractConnection;
+  ZAbstractDataset, ZAbstractTable, ZSqlMonitor, ZAbstractConnection, SyncObjs;
 
 type
   TdtmdlDBConnector = class(TDataModule)
@@ -29,6 +29,15 @@ implementation
 
 {$R *.dfm}
 
+var
+  csExecuteSQL : TCriticalSection;
+
+type
+  TZConnectionHelper = class helper for TZConnection
+    public
+      function ExecuteDirect(SQL : String) : Boolean; reintroduce;
+  end;
+
 { TdtmdlDBConnector }
 
 function TdtmdlDBConnector.ConnectToDB : Boolean;
@@ -42,5 +51,24 @@ procedure TdtmdlDBConnector.DataModuleCreate(Sender: TObject);
 begin
   DeleteFile(ExpandFileName(ZSQLMonitor.FileName));
 end;
+
+{ TZConnectionHelper }
+
+function TZConnectionHelper.ExecuteDirect(SQL: String): Boolean;
+begin
+  csExecuteSQL.Enter;
+  Try
+    Result := Inherited ExecuteDirect(SQL);
+  Finally
+    csExecuteSQL.Leave;
+  End;
+end;
+
+initialization
+  csExecuteSQL := TCriticalSection.Create;
+
+finalization
+  csExecuteSQL.Leave;
+  csExecuteSQL.Free;
 
 end.
