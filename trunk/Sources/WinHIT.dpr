@@ -15,7 +15,7 @@ uses
   AppSettingsSource in 'AppSettingsSource.pas',
   SysUtilsEx in '..\ThirdParty\SysUtilsEx.pas',
   MySQLHelpers in 'DBAdapters\MySQL\MySQLHelpers.pas',
-  Test in 'GUI\Test.pas' {frmTest},
+  {$IFDEF DEBUG}Test in 'GUI\Test.pas' {frmTest},{$ENDIF}
   SettingsBase in 'SettingsBase.pas',
   DBConnector in 'DBAdapters\MySQL\DBConnector.pas' {dtmdlDBConnector: TDataModule},
   PassWord in 'GUI\PassWord.pas' {PasswordDlg},
@@ -38,7 +38,7 @@ begin
   Application.CreateForm(TdtmdlWMIHardware, dtmdlWMIHardware);
   Application.CreateForm(TdtmdlWMISoftware, dtmdlWMISoftware);
   Application.CreateForm(TdtmdlDBInit, dtmdlDBInit);
-  Application.CreateForm(TfrmTest, frmTest);
+  {$IFDEF DEBUG}Application.CreateForm(TfrmTest, frmTest);{$ENDIF}
   Application.CreateForm(TdtmdlDBConnector, dtmdlDBConnector);
   Application.CreateForm(TPasswordDlg, PasswordDlg);
   Application.CreateForm(TdtmdlJvDBComponents, dtmdlJvDBComponents);

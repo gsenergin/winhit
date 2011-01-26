@@ -6,7 +6,7 @@ unit DBAppendData;
 interface
 
 uses
-  Classes, SysUtils, JvDBComponents, WMIHardware, WMISoftware, CWMIBase,
+  Classes, SysUtils, JvDBComponents, WMIHardware, WMISoftware, CWMIBase, DateUtils,
   RTTI, TypInfo, StrUtils, Generics.Collections, MySQLAdapter, MySQLHelpers;
 
   procedure AppendHardwareData;
@@ -73,8 +73,34 @@ begin
       FillWMIPropValues(TWMIBase(Cmp), PropVals);
       dtmdlJvDBComponents.ZConnection.GetColumnNames(TWMIBase(Cmp).Name, '%', Columns);
 
-      dtmdlJvDBComponents.ZConnection.ExecuteDirect(
-        InsertQuery(TWMIBase(Cmp).Name, Columns, PropVals));
+      With dtmdlJvDBComponents.ZTable do
+      begin
+        TableName := TWMIBase(Cmp).Name;
+        Active := True;
+
+        Last;
+        Insert;
+        UpdateCursorPos;
+
+        { TODO : здесь местами требуется ручное заполнение }
+        FieldByName('RegistrationDateTime').AsVariant := DateTimeToStr(Now);
+        FieldByName('WarrantiedLifetime').AsVariant := IncYear(Now, 2);
+        FieldByName('EstimatedLifetime').AsVariant := IncYear(Now, 10);
+
+        FieldByName('WorkstationID').AsVariant := 0;
+        FieldByName('InventoryNumberID').AsVariant := 0;
+        FieldByName('MateriallyAccountableID').AsVariant := 0;
+
+        { TODO :
+в цикле - FieldByName('%wmi property name%')
+значит, придётся из FillWMIProperties возвращать пару имя-значение
+либо воспользоваться как-то полученным выше Columns }
+
+        CommitUpdates;
+      end;
+
+//      dtmdlJvDBComponents.ZConnection.ExecuteDirect(
+//        InsertQuery(TWMIBase(Cmp).Name, Columns, PropVals));
 
         { TODO : необходимо учитывать FK колонки и специфичные не WMI-данные }
     end;
