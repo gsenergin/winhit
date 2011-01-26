@@ -95,7 +95,8 @@ var
 
 implementation
 
-uses Test, PassWord, SplashScreen, Constants, IPRange, WMISoftware, WMIHardware;
+uses {$IFDEF DEBUG}Test,{$ENDIF} PassWord, SplashScreen, Constants, IPRange,
+      WMISoftware, WMIHardware;
 
 {$R *.dfm}
 
@@ -215,10 +216,13 @@ begin
         WindowState := wsNormal;
 
         { TODO : переделать на default values. }
+        {$IFDEF DEBUG}
         frmTest.btnSavePasswordClick(nil);
         frmTest.btnSaveDBSettingsClick(nil);
 
         frmTest.Show;
+        {$ENDIF}
+
         Init;
       end;
     else
